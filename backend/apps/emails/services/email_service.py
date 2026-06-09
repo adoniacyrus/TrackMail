@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.utils import timezone
 
-from apps.emails.models import Email
+from apps.emails.models import Email, EmailStatus
 
 
 def generate_tracking_pixel(tracking_id):
@@ -44,18 +45,36 @@ def send_tracking_email(email: Email):
         </html>
     """
 
-    message = EmailMultiAlternatives(
-        subject=email.subject,
-        body='HTML email not supported.',
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[email.recipient_email],
-    )
+    try:
 
-    message.attach_alternative(
-        html_content,
-        "text/html"
-    )
+        message = EmailMultiAlternatives(
+            subject=email.subject,
+            body='HTML email not supported.',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[email.recipient_email],
+        )
 
-    message.send()
+        message.attach_alternative(
+            html_content,
+            "text/html"
+        )
 
-    return True
+        message.send()
+
+        email.status = EmailStatus.SENT
+
+        email.sent_at = timezone.now()
+
+        email.save()
+
+        return True
+
+    except Exception as error:
+
+        email.status = EmailStatus.FAILED
+
+        email.save()
+
+        print(f"Email sending failed: {error}")
+
+        return False
