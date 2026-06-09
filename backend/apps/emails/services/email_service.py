@@ -1,25 +1,61 @@
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
+from apps.emails.models import Email
 
-def send_tracking_email(
-    subject,
-    recipient_email,
-    html_content,
-):
+
+def generate_tracking_pixel(tracking_id):
     """
-    Sends HTML email through Brevo SMTP.
+    Generates invisible tracking pixel HTML.
     """
 
-    email = EmailMultiAlternatives(
-        subject=subject,
-        body='HTML email not supported.',
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=[recipient_email],
+    tracking_url = (
+        f"{settings.SITE_URL}"
+        f"/track/{tracking_id}/"
     )
 
-    email.attach_alternative(html_content, "text/html")
+    return f"""
+        <img
+            src="{tracking_url}"
+            width="1"
+            height="1"
+            style="display:none;"
+            alt=""
+        />
+    """
 
-    email.send()
+
+def send_tracking_email(email: Email):
+    """
+    Sends tracking-enabled HTML email.
+    """
+
+    tracking_pixel = generate_tracking_pixel(
+        email.tracking_id
+    )
+
+    html_content = f"""
+        <html>
+            <body>
+                {email.body}
+
+                {tracking_pixel}
+            </body>
+        </html>
+    """
+
+    message = EmailMultiAlternatives(
+        subject=email.subject,
+        body='HTML email not supported.',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[email.recipient_email],
+    )
+
+    message.attach_alternative(
+        html_content,
+        "text/html"
+    )
+
+    message.send()
 
     return True
