@@ -24,4 +24,9 @@ urlpatterns = [
         '',
         include('apps.tracking.urls')
     ),
+
+    path(
+    'api/',
+    include('apps.api.urls')
+    ),
 ]
