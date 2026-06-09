@@ -3,8 +3,7 @@ from rest_framework.response import Response
 
 from apps.api.serializers.email_serializer import EmailSerializer
 from apps.emails.models import Email
-from apps.emails.services.email_service import send_tracking_email
-
+from apps.emails.tasks import send_tracking_email_task
 
 class EmailListCreateAPIView(generics.ListCreateAPIView):
 
@@ -24,7 +23,7 @@ class EmailListCreateAPIView(generics.ListCreateAPIView):
             sender=self.request.user
         )
 
-        send_tracking_email(email)
+        send_tracking_email_task.delay(email.id)
 
     def create(self, request, *args, **kwargs):
 
