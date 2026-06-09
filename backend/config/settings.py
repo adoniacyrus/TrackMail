@@ -24,9 +24,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool)
+DEBUG = config(
+    'DEBUG',
+    cast=bool,
+    default=False
+)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    cast=lambda v: [s.strip() for s in v.split(',')],
+    default='127.0.0.1,localhost'
+)
 
 
 # Application definition
@@ -177,3 +185,11 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
+STATIC_URL = 'static/'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
