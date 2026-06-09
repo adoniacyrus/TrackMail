@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="mb-4">
+    Dashboard
+</h1>
+
+<div class="row">
+
+    <div class="col-md-3">
+
+        <div class="card text-bg-primary mb-3">
+
+            <div class="card-body">
+
+                <h5 class="card-title">
+                    Total Emails
+                </h5>
+
+                <p
+                    class="card-text fs-3"
+                    id="total-emails"
+                >
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card text-bg-success mb-3">
+
+            <div class="card-body">
+
+                <h5 class="card-title">
+                    Sent Emails
+                </h5>
+
+                <p
+                    class="card-text fs-3"
+                    id="sent-emails"
+                >
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card text-bg-danger mb-3">
+
+            <div class="card-body">
+
+                <h5 class="card-title">
+                    Failed Emails
+                </h5>
+
+                <p
+                    class="card-text fs-3"
+                    id="failed-emails"
+                >
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card text-bg-warning mb-3">
+
+            <div class="card-body">
+
+                <h5 class="card-title">
+                    Open Events
+                </h5>
+
+                <p
+                    class="card-text fs-3"
+                    id="open-events"
+                >
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function loadDashboardStats() {
+
+    const response = await fetch('/api/dashboard/')
+
+    const data = await response.json()
+
+    document.getElementById('total-emails').innerText =
+        data.total_emails
+
+    document.getElementById('sent-emails').innerText =
+        data.sent_emails
+
+    document.getElementById('failed-emails').innerText =
+        data.failed_emails
+
+    document.getElementById('open-events').innerText =
+        data.total_open_events
+}
+
+loadDashboardStats()
+
+</script>
+
+{% endblock %}

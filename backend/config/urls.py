@@ -29,4 +29,9 @@ urlpatterns = [
     'api/',
     include('apps.api.urls')
     ),
+
+    path(
+    '',
+    include('apps.dashboard.urls')
+    ),
 ]
