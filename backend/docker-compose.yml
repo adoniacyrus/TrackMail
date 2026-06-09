@@ -17,6 +17,7 @@ services:
 
     depends_on:
       - redis
+      - db
 
   redis:
 
@@ -24,6 +25,22 @@ services:
 
     ports:
       - "6379:6379"
+
+  db:
+
+    image: mysql:8.0
+
+    restart: always
+
+    environment:
+      MYSQL_DATABASE: trackmail
+      MYSQL_ROOT_PASSWORD: rootpassword
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   celery:
 
@@ -39,6 +56,7 @@ services:
 
     depends_on:
       - redis
+      - db
 
   nginx:
 
@@ -53,3 +71,7 @@ services:
 
     depends_on:
       - web
+
+volumes:
+
+  mysql_data:
