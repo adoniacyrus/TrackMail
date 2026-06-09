@@ -18,3 +18,11 @@ def compose_email_view(request):
         request,
         'dashboard/compose.html'
     )
+
+@login_required
+def email_history_view(request):
+
+    return render(
+        request,
+        'dashboard/emails.html'
+    )

@@ -5,6 +5,8 @@ from apps.emails.models import Email
 
 class EmailSerializer(serializers.ModelSerializer):
 
+    open_count = serializers.SerializerMethodField()
+
     class Meta:
 
         model = Email
@@ -18,6 +20,7 @@ class EmailSerializer(serializers.ModelSerializer):
             'status',
             'created_at',
             'sent_at',
+            'open_count',
         ]
 
         read_only_fields = [
@@ -25,4 +28,9 @@ class EmailSerializer(serializers.ModelSerializer):
             'status',
             'created_at',
             'sent_at',
+            'open_count',
         ]
+
+    def get_open_count(self, obj):
+
+        return obj.open_events.count()

@@ -1,28 +1,86 @@
-<nav class="navbar navbar-dark bg-dark">
-  <div class="container-fluid">
-    <span class="navbar-brand mb-0 h1"> TrackMail </span>
+<!DOCTYPE html>
+<html lang="en">
 
-    <div>
-      {% if user.is_authenticated %}
+<head>
 
-      <span class="text-white me-3"> {{ user.username }} </span>
+    <meta charset="UTF-8">
 
-      <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm me-2">
-        Dashboard
-      </a>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      <a
-        href="{% url 'compose-email' %}"
-        class="btn btn-outline-light btn-sm me-2"
-      >
-        Compose
-      </a>
+    <title>TrackMail</title>
 
-      <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
-        Logout
-      </a>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
-      {% endif %}
+</head>
+
+<body>
+
+    <nav class="navbar navbar-dark bg-dark">
+
+        <div class="container-fluid">
+
+            <span class="navbar-brand mb-0 h1">
+                TrackMail
+            </span>
+
+            <div>
+
+                {% if user.is_authenticated %}
+
+                    <span class="text-white me-3">
+                        {{ user.username }}
+                    </span>
+
+                    <a
+                        href="{% url 'dashboard' %}"
+                        class="btn btn-outline-light btn-sm me-2"
+                    >
+                        Dashboard
+                    </a>
+
+                    <a
+                        href="{% url 'compose-email' %}"
+                        class="btn btn-outline-light btn-sm me-2"
+                    >
+                        Compose
+                    </a>
+
+                    <a
+                        href="{% url 'email-history' %}"
+                        class="btn btn-outline-light btn-sm me-2"
+                    >
+                        Emails
+                    </a>
+
+                    <a
+                        href="{% url 'logout' %}"
+                        class="btn btn-outline-light btn-sm"
+                    >
+                        Logout
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    <div class="container mt-4">
+
+        {% block content %}
+        {% endblock %}
+
     </div>
-  </div>
-</nav>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+
+</html>

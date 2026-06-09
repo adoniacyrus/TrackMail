@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Email History
+</h2>
+
+<div class="card">
+
+    <div class="card-body">
+
+        <table class="table table-striped">
+
+            <thead>
+
+                <tr>
+
+                    <th>Recipient</th>
+
+                    <th>Subject</th>
+
+                    <th>Status</th>
+
+                    <th>Open Count</th>
+
+                    <th>Sent At</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="email-table-body">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+async function loadEmails() {
+
+    const response =
+        await fetch('/api/emails/')
+
+    const emails =
+        await response.json()
+
+    const tableBody =
+        document.getElementById('email-table-body')
+
+    tableBody.innerHTML = ''
+
+    emails.forEach(email => {
+
+        tableBody.innerHTML += `
+
+            <tr>
+
+                <td>${email.recipient_email}</td>
+
+                <td>${email.subject}</td>
+
+                <td>${email.status}</td>
+
+                <td>${email.open_count}</td>
+
+                <td>${email.sent_at || '-'}</td>
+
+            </tr>
+        `
+    })
+}
+
+loadEmails()
+
+</script>
+
+{% endblock %}
