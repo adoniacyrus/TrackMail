@@ -5,6 +5,7 @@ from apps.emails.models import Email
 
 @admin.register(Email)
 class EmailAdmin(admin.ModelAdmin):
+
     list_display = (
         'id',
         'recipient_email',
@@ -20,4 +21,10 @@ class EmailAdmin(admin.ModelAdmin):
 
     list_filter = (
         'status',
+    )
+
+    readonly_fields = (
+        'tracking_id',
+        'created_at',
+        'updated_at',
     )
