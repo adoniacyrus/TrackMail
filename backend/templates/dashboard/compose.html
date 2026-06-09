@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Compose Email
+</h2>
+
+<div class="card">
+
+    <div class="card-body">
+
+        <form id="email-form">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Recipient Email
+                </label>
+
+                <input
+                    type="email"
+                    class="form-control"
+                    id="recipient_email"
+                    required
+                >
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Subject
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    id="subject"
+                    required
+                >
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Email Body
+                </label>
+
+                <textarea
+                    class="form-control"
+                    rows="8"
+                    id="body"
+                    required
+                ></textarea>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Send Email
+            </button>
+
+        </form>
+
+        <div
+            id="success-message"
+            class="alert alert-success mt-3 d-none"
+        >
+            Email sent successfully.
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+document
+    .getElementById('email-form')
+    .addEventListener('submit', async function(event) {
+
+        event.preventDefault()
+
+        const payload = {
+            recipient_email:
+                document.getElementById('recipient_email').value,
+
+            subject:
+                document.getElementById('subject').value,
+
+            body:
+                document.getElementById('body').value,
+        }
+
+        const response = await fetch('/api/emails/', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+
+            body: JSON.stringify(payload)
+        })
+
+        if (response.ok) {
+
+            document
+                .getElementById('success-message')
+                .classList
+                .remove('d-none')
+
+            document
+                .getElementById('email-form')
+                .reset()
+        }
+    })
+
+function getCSRFToken() {
+
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        .split('=')[1]
+}
+
+</script>
+
+{% endblock %}
