@@ -1,27 +1,30 @@
 {% extends 'base.html' %}
 
+{% block title %}Compose{% endblock %}
+
 {% block content %}
-<div class="mb-4">
-    <h2 class="fw-bold mb-1">Compose Tracked Email</h2>
-    <p class="text-muted small mb-0">Send an email with an embedded tracking pixel to log when it is read.</p>
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Compose Tracked Email</h2>
+        <p class="page-subtitle">Write an elegant letter with embedded tracking — know the moment it's read.</p>
+    </div>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-lg-10">
-        <div class="card card-custom shadow-sm">
-            <div class="card-header bg-white py-3 px-4 border-bottom">
-                <h5 class="m-0 fw-semibold text-dark"><i class="bi bi-envelope-plus text-primary me-2"></i> New tracked email message</h5>
+        <div class="compose-card">
+            <div class="compose-card-header">
+                <h5><i class="bi bi-envelope-plus"></i> New Correspondence</h5>
             </div>
             <div class="card-body p-4">
-                
-                <!-- Feedback Alerts -->
+
                 <div id="alert-container">
-                    <div id="success-alert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+                    <div id="success-alert" class="alert alert-success alert-custom alert-dismissible fade show d-none" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i> <strong>Success!</strong> Email queued and sent successfully.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    
-                    <div id="error-alert" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+
+                    <div id="error-alert" class="alert alert-danger alert-custom alert-dismissible fade show d-none" role="alert">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error!</strong> <span id="error-msg">Failed to send email. Please check the inputs.</span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
@@ -29,9 +32,9 @@
 
                 <form id="email-form" novalidate>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold text-dark" for="recipient_email">Recipient Email</label>
+                        <label class="form-label-custom" for="recipient_email">Recipient Email</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="bi bi-person-fill text-muted"></i></span>
+                            <span class="input-group-text input-group-text-custom"><i class="bi bi-person-fill"></i></span>
                             <input
                                 type="email"
                                 class="form-control form-control-custom"
@@ -46,7 +49,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold text-dark" for="subject">Subject</label>
+                        <label class="form-label-custom" for="subject">Subject</label>
                         <input
                             type="text"
                             class="form-control form-control-custom"
@@ -59,13 +62,13 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold text-dark" for="body">Email Body</label>
+                    <div class="mb-3">
+                        <label class="form-label-custom" for="body">Message Body</label>
                         <textarea
-                            class="form-control form-control-custom"
+                            class="form-control form-control-custom compose-textarea"
                             rows="10"
                             id="body"
-                            placeholder="Write your email body here. The tracking pixel will be inserted automatically at the end..."
+                            placeholder="Write your message here. The tracking pixel will be inserted automatically at the end..."
                             required
                         ></textarea>
                         <div class="invalid-feedback d-block small mt-1 text-danger d-none" id="body-feedback">
@@ -73,7 +76,7 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-end">
+                    <div class="compose-footer">
                         <button
                             type="submit"
                             class="btn btn-primary-custom px-4"
@@ -89,60 +92,57 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById('email-form');
     const recipientInput = document.getElementById('recipient_email');
     const subjectInput = document.getElementById('subject');
     const bodyInput = document.getElementById('body');
-    
+
     const recipientFeedback = document.getElementById('recipient-feedback');
     const subjectFeedback = document.getElementById('subject-feedback');
     const bodyFeedback = document.getElementById('body-feedback');
-    
+
     const successAlert = document.getElementById('success-alert');
     const errorAlert = document.getElementById('error-alert');
     const errorMsg = document.getElementById('error-msg');
-    
+
     const submitBtn = document.getElementById('submit-btn');
     const btnSpinner = document.getElementById('btn-spinner');
     const btnText = document.getElementById('btn-text');
 
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
-        
-        // Reset states
+
         hideAlerts();
         resetValidation();
-        
+
         let isValid = true;
-        
-        // Validate recipient email
+
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(recipientInput.value.trim())) {
             recipientInput.classList.add('is-invalid');
             recipientFeedback.classList.remove('d-none');
             isValid = false;
         }
-        
-        // Validate subject
+
         if (subjectInput.value.trim() === '') {
             subjectInput.classList.add('is-invalid');
             subjectFeedback.classList.remove('d-none');
             isValid = false;
         }
-        
-        // Validate body
+
         if (bodyInput.value.trim() === '') {
             bodyInput.classList.add('is-invalid');
             bodyFeedback.classList.remove('d-none');
             isValid = false;
         }
-        
+
         if (!isValid) return;
 
-        // Start loading state
         submitBtn.disabled = true;
         btnSpinner.classList.remove('d-none');
         btnText.innerHTML = "Sending...";
@@ -166,12 +166,10 @@ document.addEventListener("DOMContentLoaded", function() {
             const data = await response.json();
 
             if (response.ok) {
-                // Show success
                 successAlert.classList.remove('d-none');
                 form.reset();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
-                // Parse errors
                 let errorDetails = "Failed to send email. Please check your data.";
                 if (data.recipient_email) {
                     errorDetails = `Recipient email error: ${data.recipient_email.join(' ')}`;
@@ -187,7 +185,6 @@ document.addEventListener("DOMContentLoaded", function() {
             errorAlert.classList.remove('d-none');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
-            // End loading state
             submitBtn.disabled = false;
             btnSpinner.classList.add('d-none');
             btnText.innerHTML = '<i class="bi bi-send-fill me-2"></i> Send Tracked Email';
@@ -204,17 +201,17 @@ document.addEventListener("DOMContentLoaded", function() {
             return '';
         }
     }
-    
+
     function hideAlerts() {
         successAlert.classList.add('d-none');
         errorAlert.classList.add('d-none');
     }
-    
+
     function resetValidation() {
         recipientInput.classList.remove('is-invalid');
         subjectInput.classList.remove('is-invalid');
         bodyInput.classList.remove('is-invalid');
-        
+
         recipientFeedback.classList.add('d-none');
         subjectFeedback.classList.add('d-none');
         bodyFeedback.classList.add('d-none');

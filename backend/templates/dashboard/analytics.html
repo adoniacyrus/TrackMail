@@ -1,34 +1,38 @@
 {% extends 'base.html' %}
 
+{% block title %}Analytics{% endblock %}
+
 {% block content %}
-<div class="mb-4">
-    <h2 class="fw-bold mb-1">Email Analytics</h2>
-    <p class="text-muted small mb-0">Detailed insights into open rates, active times, and recipient client profiles.</p>
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Email Analytics</h2>
+        <p class="page-subtitle">Detailed insights into open rates, active times, and recipient profiles.</p>
+    </div>
 </div>
 
 <!-- Aggregated Metrics -->
 <div class="row g-4 mb-4">
     <div class="col-sm-6 col-md-4">
         <div class="card stat-card primary h-100">
-            <div class="card-body p-4 text-center">
-                <span class="text-muted d-block small fw-semibold mb-2">TOTAL EMAILS SENT</span>
-                <strong class="display-6 fw-bold text-dark">{{ total_emails }}</strong>
+            <div class="card-body text-center p-4">
+                <span class="stat-card-label">Total Emails Sent</span>
+                <strong class="stat-card-value d-block">{{ total_emails }}</strong>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-md-4">
         <div class="card stat-card success h-100">
-            <div class="card-body p-4 text-center">
-                <span class="text-muted d-block small fw-semibold mb-2">UNIQUE EMAILS OPENED</span>
-                <strong class="display-6 fw-bold text-dark">{{ opened_emails }}</strong>
+            <div class="card-body text-center p-4">
+                <span class="stat-card-label">Unique Emails Opened</span>
+                <strong class="stat-card-value d-block">{{ opened_emails }}</strong>
             </div>
         </div>
     </div>
     <div class="col-md-4 col-sm-12">
-        <div class="card stat-card warning text-dark h-100">
-            <div class="card-body p-4 text-center">
-                <span class="text-muted d-block small fw-semibold mb-2">AVERAGE OPEN RATE</span>
-                <strong class="display-6 fw-bold text-dark">{{ open_rate }}%</strong>
+        <div class="card stat-card warning h-100">
+            <div class="card-body text-center p-4">
+                <span class="stat-card-label">Average Open Rate</span>
+                <strong class="stat-card-value d-block">{{ open_rate }}%</strong>
             </div>
         </div>
     </div>
@@ -36,17 +40,18 @@
 
 <!-- Chart Panel -->
 <div class="card card-custom mb-4">
-    <div class="card-header border-0 bg-white pt-4 px-4 d-flex justify-content-between align-items-center">
-        <h5 class="m-0 fw-semibold"><i class="bi bi-graph-up text-primary me-2"></i> Open History (Last 30 Days)</h5>
+    <div class="card-header">
+        <span><i class="bi bi-graph-up text-bronze me-2"></i> Open History (Last 30 Days)</span>
     </div>
     <div class="card-body p-4">
         {% if daily_opens %}
-            <div style="position: relative; height: 260px; width: 100%;">
+            <div class="chart-container">
                 <canvas id="opensChart"></canvas>
             </div>
         {% else %}
-            <div class="text-center py-5 text-muted">
-                <p class="mb-0">Insufficient data to plot historical trends. Once recipients open your emails, a daily timeline will appear here.</p>
+            <div class="empty-state py-4">
+                <i class="bi bi-bar-chart empty-state-icon"></i>
+                <p>Insufficient data to plot historical trends. Once recipients open your emails, a daily timeline will appear here.</p>
             </div>
         {% endif %}
     </div>
@@ -54,8 +59,8 @@
 
 <!-- Global Tracking Event Log -->
 <div class="card card-custom">
-    <div class="card-header bg-white pt-4 px-4 border-bottom pb-3">
-        <h5 class="m-0 fw-semibold"><i class="bi bi-list-stars text-muted me-2"></i> Open Activity Timeline Log</h5>
+    <div class="card-header">
+        <span><i class="bi bi-list-stars text-bronze me-2"></i> Open Activity Timeline</span>
     </div>
     <div class="card-body p-0">
         {% if open_events %}
@@ -66,7 +71,7 @@
                             <th>Email Subject</th>
                             <th>Recipient</th>
                             <th>IP Address</th>
-                            <th>User Agent (Client)</th>
+                            <th>User Agent</th>
                             <th>Opened At (UTC)</th>
                         </tr>
                     </thead>
@@ -74,7 +79,7 @@
                         {% for event in open_events %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'email-detail' event.email.id %}" class="fw-semibold text-dark text-decoration-none">
+                                    <a href="{% url 'email-detail' event.email.id %}" class="link-hover-bronze fw-semibold">
                                         {{ event.email.subject }}
                                     </a>
                                 </td>
@@ -92,16 +97,17 @@
                 </table>
             </div>
         {% else %}
-            <div class="text-center py-5 text-muted">
-                <i class="bi bi-clock-history fs-1 d-block mb-3 text-white-50"></i>
-                <p class="mb-0">No opens recorded yet.</p>
+            <div class="empty-state">
+                <i class="bi bi-clock-history empty-state-icon"></i>
+                <p>No opens recorded yet.</p>
             </div>
         {% endif %}
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 {% if daily_opens %}
-<!-- Chart JS initialization script -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const ctx = document.getElementById('opensChart').getContext('2d');
@@ -115,50 +121,44 @@
                 datasets: [{
                     label: 'Email Opens',
                     data: counts,
-                    borderColor: '#4f46e5',
-                    backgroundColor: 'rgba(79, 70, 229, 0.08)',
-                    borderWidth: 3,
+                    borderColor: '#a67c52',
+                    backgroundColor: 'rgba(166, 124, 82, 0.08)',
+                    borderWidth: 2.5,
                     fill: true,
-                    tension: 0.3,
-                    pointBackgroundColor: '#4f46e5',
-                    pointBorderColor: '#ffffff',
+                    tension: 0.35,
+                    pointBackgroundColor: '#c9a962',
+                    pointBorderColor: '#fdfbf7',
                     pointBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHoverRadius: 7
+                    pointRadius: 4,
+                    pointHoverRadius: 6
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
+                    legend: { display: false },
                     tooltip: {
                         padding: 12,
-                        backgroundColor: '#0f172a',
-                        titleFont: { size: 13, weight: 'bold' },
-                        bodyFont: { size: 13 },
+                        backgroundColor: '#1a1814',
+                        titleFont: { size: 13, weight: 'bold', family: 'DM Sans' },
+                        bodyFont: { size: 13, family: 'DM Sans' },
                         cornerRadius: 8
                     }
                 },
                 scales: {
                     x: {
-                        grid: {
-                            display: false
-                        },
+                        grid: { display: false },
                         ticks: {
-                            color: '#64748b',
-                            font: { family: 'Plus Jakarta Sans', size: 11 }
+                            color: '#7a6f63',
+                            font: { family: 'DM Sans', size: 11 }
                         }
                     },
                     y: {
-                        grid: {
-                            color: '#e2e8f0'
-                        },
+                        grid: { color: 'rgba(168, 148, 120, 0.15)' },
                         ticks: {
-                            color: '#64748b',
-                            font: { family: 'Plus Jakarta Sans', size: 11 },
+                            color: '#7a6f63',
+                            font: { family: 'DM Sans', size: 11 },
                             stepSize: 1,
                             precision: 0
                         },
@@ -170,5 +170,4 @@
     });
 </script>
 {% endif %}
-
 {% endblock %}

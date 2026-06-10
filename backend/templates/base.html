@@ -5,146 +5,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrackMail - Premium Email Tracking SaaS</title>
+    <title>{% block title %}TrackMail{% endblock %} — Premium Email Tracking</title>
 
     <!-- Bootstrap 5 CSS -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Bootstrap Icons -->
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    >
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Custom CSS -->
-    <link
-        rel="stylesheet"
-        href="{% static 'css/main.css' %}"
-    >
+    <!-- TrackMail Design System -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+
+    {% block extra_css %}{% endblock %}
 
     <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
 
     {% if user.is_authenticated %}
-        <!-- Authenticated SaaS App Layout -->
         <div class="app-container">
-            
-            <!-- Sidebar -->
-            <aside class="sidebar-wrapper" id="sidebar">
-                <div class="sidebar-brand">
-                    <a href="{% url 'dashboard' %}">
-                        <i class="bi bi-envelope-check-fill"></i> TrackMail
-                    </a>
-                </div>
-                
-                <nav class="sidebar-nav">
-                    <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                        <i class="bi bi-speedometer2"></i> Dashboard
-                    </a>
-                    <a href="{% url 'compose-email' %}" class="nav-link {% if request.resolver_match.url_name == 'compose-email' %}active{% endif %}">
-                        <i class="bi bi-pencil-square"></i> Compose Email
-                    </a>
-                    <a href="{% url 'email-history' %}" class="nav-link {% if request.resolver_match.url_name == 'email-history' or request.resolver_match.url_name == 'email-detail' %}active{% endif %}">
-                        <i class="bi bi-clock-history"></i> Email History
-                    </a>
-                    <a href="{% url 'analytics' %}" class="nav-link {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}">
-                        <i class="bi bi-bar-chart-line"></i> Analytics
-                    </a>
-                </nav>
-                
-                <div class="sidebar-footer">
-                    <div class="sidebar-user">
-                        <div class="sidebar-user-avatar">
-                            {{ user.username|slice:":1"|upper }}
-                        </div>
-                        <div class="sidebar-user-name" title="{{ user.username }}">
-                            {{ user.username }}
-                        </div>
-                    </div>
-                    <form method="POST" action="{% url 'logout' %}" class="m-0">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-link text-white-50 p-0 hover:text-white" title="Logout">
-                            <i class="bi bi-box-arrow-right fs-5"></i>
-                        </button>
-                    </form>
-                </div>
-            </aside>
+            {% include 'partials/_sidebar.html' %}
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-            <!-- Main Content Container -->
             <div class="main-content">
-                <!-- Top Navbar -->
-                <header class="content-header">
-                    <button class="btn btn-outline-secondary d-lg-none" id="sidebarToggle">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <div class="d-none d-md-flex align-items-center gap-2">
-                        <i class="bi bi-calendar-event text-muted"></i>
-                        <span class="text-muted small" id="current-date"></span>
-                    </div>
-                    <div>
-                        <span class="badge bg-light text-dark p-2 border">
-                            <i class="bi bi-shield-check text-success"></i> Premium Member
-                        </span>
-                    </div>
-                </header>
+                {% include 'partials/_header.html' %}
 
-                <!-- Main Content Body -->
-                <main class="content-body">
-                    {% block content %}
-                    {% endblock %}
+                <main class="content-body fade-in">
+                    {% include 'partials/_alert.html' %}
+                    {% block content %}{% endblock %}
                 </main>
             </div>
-            
         </div>
     {% else %}
-        <!-- Unauthenticated Public Page Layout -->
-        <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'landing-page' %}">
-                    <i class="bi bi-envelope-check-fill"></i> TrackMail
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-end" id="navbarText">
-                    <div class="d-flex align-items-center gap-3 mt-2 mt-lg-0">
-                        <a href="{% url 'login' %}" class="btn btn-link text-dark text-decoration-none fw-semibold">Login</a>
-                        <a href="{% url 'register' %}" class="btn btn-primary-custom btn-sm px-4">Get Started</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        {% include 'partials/_public_navbar.html' %}
 
         <main>
-            {% block public_content %}
-            {% endblock %}
+            {% block public_content %}{% endblock %}
         </main>
     {% endif %}
 
     <!-- Bootstrap 5 Bundle JS -->
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js">
-    </script>
-    
-    <!-- Sidebar Toggle Script & Date -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Sidebar Toggle for Mobile
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            function closeSidebar() {
+                if (sidebar) sidebar.classList.remove('show');
+                if (overlay) overlay.classList.remove('show');
+            }
+
             if (sidebarToggle && sidebar) {
                 sidebarToggle.addEventListener('click', function() {
                     sidebar.classList.toggle('show');
+                    if (overlay) overlay.classList.toggle('show');
                 });
             }
-            
-            // Format Current Date
+
+            if (overlay) {
+                overlay.addEventListener('click', closeSidebar);
+            }
+
             const dateEl = document.getElementById('current-date');
             if (dateEl) {
                 const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
@@ -152,6 +81,8 @@
             }
         });
     </script>
+
+    {% block extra_js %}{% endblock %}
 
 </body>
 

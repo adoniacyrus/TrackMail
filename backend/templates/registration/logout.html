@@ -1,38 +1,29 @@
 {% extends 'base.html' %}
 
+{% block title %}Logout{% endblock %}
+
 {% block public_content %}
-<div class="auth-wrapper py-5 px-3">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+<div class="auth-wrapper">
+    <div class="auth-container">
 
-        <div class="card auth-card p-4 text-center">
-            <div class="card-body p-2">
-                
-                <div class="mb-4">
-                    <span class="d-inline-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle p-3 mb-3" style="width: 64px; height: 64px;">
-                        <i class="bi bi-box-arrow-right fs-2"></i>
-                    </span>
-                    <h4 class="fw-bold text-dark mb-2">Sign Out</h4>
-                    <p class="text-muted small">Are you sure you want to end your current active session?</p>
-                </div>
-
-                <form method="POST" action="{% url 'logout' %}" class="mb-0">
-                    {% csrf_token %}
-
-                    <button
-                        type="submit"
-                        class="btn btn-danger w-100 py-2.5 mb-3"
-                    >
-                        Confirm Sign Out
-                    </button>
-
-                    <a
-                        href="{% url 'dashboard' %}"
-                        class="btn btn-outline-secondary w-100 py-2.5"
-                    >
-                        Cancel
-                    </a>
-                </form>
+        <div class="auth-card logout-card">
+            <div class="logout-icon-wrap">
+                <i class="bi bi-box-arrow-right fs-2"></i>
             </div>
+            <h4 class="auth-card-title">Sign Out</h4>
+            <p>Are you sure you want to end your current active session?</p>
+
+            <form method="POST" action="{% url 'logout' %}" class="mb-0">
+                {% csrf_token %}
+
+                <button type="submit" class="btn btn-danger w-100 auth-submit-btn mb-3">
+                    Confirm Sign Out
+                </button>
+
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-bronze w-100 auth-submit-btn">
+                    Cancel
+                </a>
+            </form>
         </div>
 
     </div>

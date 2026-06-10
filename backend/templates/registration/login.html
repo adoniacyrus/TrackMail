@@ -1,86 +1,78 @@
 {% extends 'base.html' %}
 
+{% block title %}Login{% endblock %}
+
 {% block public_content %}
-<div class="auth-wrapper py-5 px-3">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
-        
-        <div class="text-center mb-4">
-            <h2 class="fw-bold mb-1"><i class="bi bi-envelope-check-fill text-primary"></i> TrackMail</h2>
-            <span class="text-muted small">Real-time SaaS email tracking system</span>
+<div class="auth-wrapper">
+    <div class="auth-container">
+
+        <div class="auth-brand">
+            <h2 class="auth-brand-title"><i class="bi bi-envelope-check-fill"></i> TrackMail</h2>
+            <span class="auth-brand-tagline">Ancient communication meets modern email intelligence</span>
         </div>
 
-        <div class="card auth-card p-4">
-            <div class="card-body p-2">
-                <h4 class="fw-bold text-dark mb-4 text-center">Welcome Back</h4>
+        <div class="auth-card">
+            <h4 class="auth-card-title">Welcome Back</h4>
 
-                <form method="POST" novalidate>
-                    {% csrf_token %}
+            <form method="POST" novalidate>
+                {% csrf_token %}
 
-                    {% if form.errors %}
-                        <div class="alert alert-danger p-3 mb-4 small rounded-3">
-                            <i class="bi bi-exclamation-circle-fill me-2"></i> Your username and password didn't match. Please try again.
-                        </div>
-                    {% endif %}
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-dark" for="username">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
-                            <input
-                                type="text"
-                                name="username"
-                                id="username"
-                                class="form-control form-control-custom border-start-0"
-                                placeholder="Enter your username"
-                                required
-                            >
-                        </div>
+                {% if form.errors %}
+                    <div class="alert alert-danger alert-custom p-3 mb-4 small">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i> Your username and password didn't match. Please try again.
                     </div>
+                {% endif %}
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-dark" for="password">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                class="form-control form-control-custom border-start-0"
-                                placeholder="••••••••"
-                                required
-                            >
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label-custom" for="username">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input
+                            type="text"
+                            name="username"
+                            id="username"
+                            class="form-control form-control-custom"
+                            placeholder="Enter your username"
+                            required
+                        >
                     </div>
+                </div>
 
-                    <div class="mb-4 d-flex justify-content-between align-items-center">
-                        <div class="form-check">
-                            <input
-                                type="checkbox"
-                                name="remember_me"
-                                id="remember_me"
-                                class="form-check-input"
-                            >
-                            <label class="form-check-label text-muted small" for="remember_me">
-                                Keep me logged in
-                            </label>
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label-custom" for="password">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            class="form-control form-control-custom"
+                            placeholder="••••••••"
+                            required
+                        >
                     </div>
+                </div>
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary-custom w-100 py-2.5 mb-3"
-                    >
-                        Sign In
-                    </button>
-
-                    <div class="text-center pt-2">
-                        <span class="text-muted small">New to TrackMail?</span>
-                        <a href="{% url 'register' %}" class="small fw-semibold text-decoration-none">Create an account</a>
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input type="checkbox" name="remember_me" id="remember_me" class="form-check-input">
+                        <label class="form-check-label text-muted small" for="remember_me">
+                            Keep me logged in
+                        </label>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom w-100 auth-submit-btn mb-3">
+                    Sign In
+                </button>
+
+                <div class="text-center pt-2">
+                    <span class="text-muted small">New to TrackMail?</span>
+                    <a href="{% url 'register' %}" class="auth-footer-link small">Create an account</a>
+                </div>
+            </form>
         </div>
-        
+
     </div>
 </div>
 {% endblock %}

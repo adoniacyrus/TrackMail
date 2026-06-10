@@ -1,59 +1,68 @@
 {% extends 'base.html' %}
 
+{% block title %}Home{% endblock %}
+
 {% block public_content %}
 <!-- Hero Section -->
-<section class="landing-hero text-center text-lg-start">
-    <div class="container">
+<section class="landing-hero">
+    <div class="landing-hero-shapes">
+        <div class="landing-shape landing-shape-1"></div>
+        <div class="landing-shape landing-shape-2"></div>
+        <div class="landing-shape landing-shape-3"></div>
+    </div>
+    <div class="container position-relative">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-3">
-                    Track Your Emails in <span class="gradient-text">Real-Time</span>
+                <span class="hero-badge">
+                    <i class="bi bi-send"></i> Ancient Communication Meets Modern Intelligence
+                </span>
+                <h1 class="hero-title fw-bold">
+                    Messages Through Time, <span class="gradient-text">Tracked in Real-Time</span>
                 </h1>
-                <p class="lead text-muted mb-4">
-                    Know exactly when, where, and on what device your recipients open your emails. Increase engagement and close more deals.
+                <p class="hero-lead">
+                    From handwritten letters to digital correspondence — know exactly when, where, and on what device your recipients open your messages. Elegant tracking for the modern messenger.
                 </p>
-                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
-                    <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg px-4 fs-6">
+                <div class="hero-cta-group">
+                    <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg">
                         Start Tracking Free <i class="bi bi-arrow-right ms-2"></i>
                     </a>
-                    <a href="#features" class="btn btn-outline-secondary btn-lg px-4 fs-6">
-                        Learn More
+                    <a href="#features" class="btn btn-outline-bronze btn-lg">
+                        Explore Features
                     </a>
                 </div>
             </div>
             <div class="col-lg-6">
-                <!-- Dashboard Mockup Preview -->
-                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                    <div class="bg-dark p-3 d-flex align-items-center gap-2">
-                        <span class="bg-danger rounded-circle d-inline-block" style="width:12px; height:12px;"></span>
-                        <span class="bg-warning rounded-circle d-inline-block" style="width:12px; height:12px;"></span>
-                        <span class="bg-success rounded-circle d-inline-block" style="width:12px; height:12px;"></span>
+                <div class="hero-mockup">
+                    <div class="hero-mockup-bar">
+                        <span class="hero-mockup-dot bg-danger"></span>
+                        <span class="hero-mockup-dot bg-warning"></span>
+                        <span class="hero-mockup-dot bg-success"></span>
                         <span class="text-white-50 ms-2 small">TrackMail Dashboard</span>
                     </div>
-                    <div class="card-body p-4 bg-light">
-                        <div class="row g-3 mb-4">
+                    <div class="hero-mockup-body">
+                        <div class="row g-3 mb-0">
                             <div class="col-6">
-                                <div class="bg-white p-3 border rounded-3 text-center">
-                                    <small class="text-muted d-block">Open Rate</small>
-                                    <strong class="fs-4 gradient-text">84.2%</strong>
+                                <div class="hero-mockup-stat">
+                                    <small>Open Rate</small>
+                                    <strong class="gradient-text">84.2%</strong>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="bg-white p-3 border rounded-3 text-center">
-                                    <small class="text-muted d-block">Total Emails</small>
-                                    <strong class="fs-4 text-dark">1,248</strong>
+                                <div class="hero-mockup-stat">
+                                    <small>Letters Sent</small>
+                                    <strong class="text-ink">1,248</strong>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-white p-3 border rounded-3">
-                            <h6 class="mb-3 border-bottom pb-2"><i class="bi bi-clock-history text-indigo"></i> Recent Activity</h6>
+                        <div class="hero-mockup-activity">
+                            <h6><i class="bi bi-clock-history text-bronze me-1"></i> Recent Activity</h6>
                             <div class="d-flex justify-content-between align-items-center mb-2 small">
-                                <span>Subject: Proposal V2</span>
-                                <span class="badge bg-success-subtle text-success">Opened 2m ago</span>
+                                <span>Proposal V2</span>
+                                <span class="badge badge-sent badge-custom">Opened 2m ago</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center small">
-                                <span>Subject: Client Call</span>
-                                <span class="badge bg-warning-subtle text-warning">Opened 1h ago</span>
+                                <span>Client Call Follow-up</span>
+                                <span class="badge badge-pending badge-custom">Opened 1h ago</span>
                             </div>
                         </div>
                     </div>
@@ -63,44 +72,45 @@
     </div>
 </section>
 
-<!-- Features Section -->
-<section id="features" class="py-5 bg-white">
-    <div class="container py-5">
-        <div class="text-center max-w-2xl mx-auto mb-5">
-            <h2 class="fw-bold">Features Built for Modern Teams</h2>
-            <p class="text-muted">Everything you need to track, monitor, and optimize your email communications.</p>
+<!-- Track Every Letter -->
+<section id="features" class="landing-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Track Every Letter</span>
+            <h2>Modern Intelligence for Digital Correspondence</h2>
+            <p>Everything you need to monitor, analyze, and optimize your email outreach — wrapped in an interface inspired by the art of letter writing.</p>
         </div>
-        <div class="row g-4 mt-2">
+        <div class="row g-4">
             <div class="col-md-4">
                 <div class="landing-card">
                     <div class="landing-card-icon">
-                        <i class="bi bi-pixel-fill"></i>
+                        <i class="bi bi-envelope-paper"></i>
                     </div>
-                    <h4>Invisible Tracking Pixel</h4>
-                    <p class="text-muted mb-0">
-                        We embed an invisible 1x1 image in your HTML emails. When the recipient opens the mail, the pixel fires instantly.
+                    <h4>Invisible Tracking Seal</h4>
+                    <p>
+                        An invisible 1×1 pixel embedded in your HTML emails — like a wax seal on a letter. When opened, it fires instantly and silently.
                     </p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="landing-card">
                     <div class="landing-card-icon">
-                        <i class="bi bi-geo-alt-fill"></i>
+                        <i class="bi bi-geo-alt"></i>
                     </div>
-                    <h4>IP & Geolocation Log</h4>
-                    <p class="text-muted mb-0">
-                        Record user IP addresses, network user agents, and timestamps securely to identify client configurations.
+                    <h4>Postal Route Intelligence</h4>
+                    <p>
+                        Record IP addresses, geolocation data, user agents, and precise timestamps to understand where and how your messages are received.
                     </p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="landing-card">
                     <div class="landing-card-icon">
-                        <i class="bi bi-bar-chart-fill"></i>
+                        <i class="bi bi-graph-up-arrow"></i>
                     </div>
-                    <h4>Analytics & Timeline</h4>
-                    <p class="text-muted mb-0">
-                        Explore daily timelines of opens, unique open metrics, and general delivery status logs in our clean charts.
+                    <h4>Correspondence Analytics</h4>
+                    <p>
+                        Explore daily open timelines, unique open metrics, and delivery logs through elegant charts and activity feeds.
                     </p>
                 </div>
             </div>
@@ -108,18 +118,107 @@
     </div>
 </section>
 
-<!-- CTA & Footer -->
-<section class="py-5 bg-light border-top">
-    <div class="container text-center py-4">
-        <h3 class="fw-bold mb-3">Get Started with TrackMail Today</h3>
-        <p class="text-muted mb-4 max-w-xl mx-auto">Create an account in less than a minute and start tracking your outreach campaigns with our intuitive dashboard.</p>
-        <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg px-5">Create Free Account</a>
+<!-- Know When Your Message Arrives -->
+<section class="landing-section landing-section-alt">
+    <div class="container">
+        <div class="row feature-row g-5">
+            <div class="col-lg-6 order-lg-2">
+                <span class="section-label">Know When Your Message Arrives</span>
+                <h2 class="mb-3">Real-Time Open Notifications</h2>
+                <p class="text-muted mb-4">
+                    Never wonder if your message was read. TrackMail delivers instant visibility into recipient engagement — from the moment your letter lands to every subsequent open.
+                </p>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="landing-card-icon mb-0" style="width: 40px; height: 40px; font-size: 1rem;">
+                            <i class="bi bi-eye"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Instant Open Detection</h6>
+                            <p class="text-muted small mb-0">Know the exact moment your email is opened, down to the second.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="landing-card-icon mb-0" style="width: 40px; height: 40px; font-size: 1rem;">
+                            <i class="bi bi-device-hdd"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Device & Client Profiling</h6>
+                            <p class="text-muted small mb-0">See which browser, device, and operating system accessed your message.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="landing-card-icon mb-0" style="width: 40px; height: 40px; font-size: 1rem;">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Complete Activity Timeline</h6>
+                            <p class="text-muted small mb-0">Review every open event in a beautiful chronological feed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="feature-visual">
+                    <div class="feature-visual-item">
+                        <div class="feature-visual-icon"><i class="bi bi-envelope-open"></i></div>
+                        <div class="feature-visual-text">
+                            <h6>Proposal V2 — Opened</h6>
+                            <p>2 minutes ago · Chrome on Windows · 192.168.1.42</p>
+                        </div>
+                    </div>
+                    <div class="feature-visual-item">
+                        <div class="feature-visual-icon"><i class="bi bi-envelope-open"></i></div>
+                        <div class="feature-visual-text">
+                            <h6>Client Call Follow-up — Opened</h6>
+                            <p>1 hour ago · Safari on macOS · 10.0.0.15</p>
+                        </div>
+                    </div>
+                    <div class="feature-visual-item">
+                        <div class="feature-visual-icon"><i class="bi bi-send-check"></i></div>
+                        <div class="feature-visual-text">
+                            <h6>Quarterly Report — Delivered</h6>
+                            <p>3 hours ago · Successfully sent to client@example.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
-<footer class="py-4 bg-white border-top">
-    <div class="container text-center text-muted small">
-        <p class="mb-0">&copy; 2026 TrackMail Inc. All rights reserved.</p>
+<!-- CTA -->
+<section class="landing-cta">
+    <div class="container">
+        <h3>Begin Your Correspondence Journey</h3>
+        <p>Create an account in less than a minute and start tracking your outreach with our elegant, modern dashboard.</p>
+        <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg px-5">
+            Create Free Account <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="landing-footer">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                <div class="landing-footer-brand">
+                    <i class="bi bi-envelope-check-fill"></i> TrackMail
+                </div>
+                <p class="landing-footer-tagline">Ancient communication meets modern email intelligence.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <div class="landing-footer-links justify-content-md-end mb-0">
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'register' %}">Register</a>
+                    <a href="#features">Features</a>
+                </div>
+            </div>
+        </div>
+        <div class="landing-footer-bottom">
+            <p class="mb-0">&copy; 2026 TrackMail. All rights reserved.</p>
+        </div>
     </div>
 </footer>
 {% endblock %}

@@ -1,25 +1,28 @@
 {% extends 'base.html' %}
 
+{% block title %}Dashboard{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="page-header">
     <div>
-        <h2 class="fw-bold mb-1">Welcome back, {{ user.username }}!</h2>
-        <p class="text-muted small mb-0">Here's what's happening with your tracked emails today.</p>
+        <h2 class="page-title">Welcome back, {{ user.username }}</h2>
+        <p class="page-subtitle">Here's what's happening with your tracked correspondence today.</p>
     </div>
-    <a href="{% url 'compose-email' %}" class="btn btn-primary-custom">
-        <i class="bi bi-pencil-square me-2"></i> Compose Email
-    </a>
+    <div class="page-header-actions">
+        <a href="{% url 'compose-email' %}" class="btn btn-primary-custom">
+            <i class="bi bi-pencil-square me-2"></i> Compose Email
+        </a>
+    </div>
 </div>
 
 <!-- Stat Cards -->
 <div class="row g-4 mb-4">
-    <!-- Total Emails -->
     <div class="col-sm-6 col-xl-3">
         <div class="card stat-card primary h-100">
-            <div class="card-body d-flex align-items-center justify-content-between p-4">
+            <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
-                    <span class="text-muted d-block small fw-semibold mb-1">TOTAL EMAILS</span>
-                    <strong class="fs-2 text-dark">{{ total_emails }}</strong>
+                    <span class="stat-card-label">Total Emails</span>
+                    <strong class="stat-card-value">{{ total_emails }}</strong>
                 </div>
                 <div class="stat-card-icon">
                     <i class="bi bi-envelope-open"></i>
@@ -27,13 +30,12 @@
             </div>
         </div>
     </div>
-    <!-- Sent Emails -->
     <div class="col-sm-6 col-xl-3">
         <div class="card stat-card success h-100">
-            <div class="card-body d-flex align-items-center justify-content-between p-4">
+            <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
-                    <span class="text-muted d-block small fw-semibold mb-1">SENT EMAILS</span>
-                    <strong class="fs-2 text-dark">{{ sent_emails }}</strong>
+                    <span class="stat-card-label">Sent Emails</span>
+                    <strong class="stat-card-value">{{ sent_emails }}</strong>
                 </div>
                 <div class="stat-card-icon">
                     <i class="bi bi-send-check"></i>
@@ -41,13 +43,12 @@
             </div>
         </div>
     </div>
-    <!-- Failed Emails -->
     <div class="col-sm-6 col-xl-3">
         <div class="card stat-card danger h-100">
-            <div class="card-body d-flex align-items-center justify-content-between p-4">
+            <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
-                    <span class="text-muted d-block small fw-semibold mb-1">FAILED EMAILS</span>
-                    <strong class="fs-2 text-dark">{{ failed_emails }}</strong>
+                    <span class="stat-card-label">Failed Emails</span>
+                    <strong class="stat-card-value">{{ failed_emails }}</strong>
                 </div>
                 <div class="stat-card-icon">
                     <i class="bi bi-exclamation-octagon"></i>
@@ -55,13 +56,12 @@
             </div>
         </div>
     </div>
-    <!-- Open Events -->
     <div class="col-sm-6 col-xl-3">
         <div class="card stat-card warning h-100">
-            <div class="card-body d-flex align-items-center justify-content-between p-4">
+            <div class="card-body d-flex align-items-center justify-content-between">
                 <div>
-                    <span class="text-muted d-block small fw-semibold mb-1">OPEN EVENTS</span>
-                    <strong class="fs-2 text-dark">{{ total_open_events }}</strong>
+                    <span class="stat-card-label">Open Events</span>
+                    <strong class="stat-card-value">{{ total_open_events }}</strong>
                 </div>
                 <div class="stat-card-icon">
                     <i class="bi bi-eye"></i>
@@ -76,35 +76,35 @@
     <div class="col-lg-6">
         <div class="card card-custom h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="m-0"><i class="bi bi-clock-history text-muted me-2"></i> Recent Sent Emails</span>
-                <a href="{% url 'email-history' %}" class="btn btn-link btn-sm text-decoration-none">View All</a>
+                <span><i class="bi bi-clock-history text-bronze me-2"></i> Recent Sent Emails</span>
+                <a href="{% url 'email-history' %}" class="card-header-link">View All</a>
             </div>
             <div class="card-body p-0">
                 {% if recent_emails %}
-                    <div class="list-group list-group-flush">
+                    <div class="list-group list-group-flush activity-list">
                         {% for email in recent_emails %}
-                            <div class="list-group-item p-3 border-0 border-bottom">
+                            <div class="list-group-item">
                                 <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                    <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 70%;">
-                                        <a href="{% url 'email-detail' email.id %}" class="text-dark text-decoration-none hover-primary">
+                                    <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 65%;">
+                                        <a href="{% url 'email-detail' email.id %}" class="link-hover-bronze">
                                             {{ email.subject }}
                                         </a>
                                     </h6>
-                                    <span class="badge bg-light text-muted border font-monospace small">
+                                    <span class="activity-time-badge">
                                         {{ email.created_at|timesince }} ago
                                     </span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                                     <span class="text-muted small">To: <code>{{ email.recipient_email }}</code></span>
                                     <div class="d-flex align-items-center gap-2">
                                         {% if email.status == 'SENT' %}
-                                            <span class="badge bg-success-subtle text-success badge-custom">Sent</span>
+                                            <span class="badge badge-sent badge-custom">Sent</span>
                                         {% elif email.status == 'FAILED' %}
-                                            <span class="badge bg-danger-subtle text-danger badge-custom">Failed</span>
+                                            <span class="badge badge-failed badge-custom">Failed</span>
                                         {% else %}
-                                            <span class="badge bg-warning-subtle text-warning badge-custom">Pending</span>
+                                            <span class="badge badge-pending badge-custom">Pending</span>
                                         {% endif %}
-                                        <span class="badge bg-primary-subtle text-primary badge-custom">
+                                        <span class="badge badge-opens badge-custom">
                                             <i class="bi bi-eye-fill me-1"></i> {{ email.open_events.count }} opens
                                         </span>
                                     </div>
@@ -113,9 +113,9 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <div class="text-center py-5 text-muted">
-                        <i class="bi bi-envelope fs-1 d-block mb-3 text-white-50"></i>
-                        <p class="mb-0">No emails sent yet. Compose one to get started!</p>
+                    <div class="empty-state">
+                        <i class="bi bi-envelope empty-state-icon"></i>
+                        <p>No emails sent yet. Compose one to get started!</p>
                     </div>
                 {% endif %}
             </div>
@@ -126,38 +126,38 @@
     <div class="col-lg-6">
         <div class="card card-custom h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="m-0"><i class="bi bi-activity text-muted me-2"></i> Recent Open Activity</span>
-                <a href="{% url 'analytics' %}" class="btn btn-link btn-sm text-decoration-none">Analytics</a>
+                <span><i class="bi bi-activity text-bronze me-2"></i> Recent Open Activity</span>
+                <a href="{% url 'analytics' %}" class="card-header-link">Analytics</a>
             </div>
             <div class="card-body p-0">
                 {% if recent_events %}
-                    <div class="list-group list-group-flush">
+                    <div class="list-group list-group-flush activity-list">
                         {% for event in recent_events %}
-                            <div class="list-group-item p-3 border-0 border-bottom">
+                            <div class="list-group-item">
                                 <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                                    <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 70%;">
-                                        <i class="bi bi-eye-fill text-warning me-1"></i> Opened: 
-                                        <a href="{% url 'email-detail' event.email.id %}" class="text-dark text-decoration-none">
+                                    <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 65%;">
+                                        <i class="bi bi-eye-fill text-bronze me-1"></i>
+                                        <a href="{% url 'email-detail' event.email.id %}" class="link-hover-bronze">
                                             {{ event.email.subject }}
                                         </a>
                                     </h6>
-                                    <span class="badge bg-light text-muted border font-monospace small">
+                                    <span class="activity-time-badge">
                                         {{ event.opened_at|timesince }} ago
                                     </span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                                     <span class="text-muted small">By: <code>{{ event.email.recipient_email }}</code></span>
                                     <span class="small text-muted">
-                                        IP: <code class="text-dark">{{ event.ip_address }}</code>
+                                        IP: <code>{{ event.ip_address }}</code>
                                     </span>
                                 </div>
                             </div>
                         {% endfor %}
                     </div>
                 {% else %}
-                    <div class="text-center py-5 text-muted">
-                        <i class="bi bi-eye-slash fs-1 d-block mb-3 text-white-50"></i>
-                        <p class="mb-0">No open events recorded yet. Send tracked emails to see them here.</p>
+                    <div class="empty-state">
+                        <i class="bi bi-eye-slash empty-state-icon"></i>
+                        <p>No open events recorded yet. Send tracked emails to see them here.</p>
                     </div>
                 {% endif %}
             </div>
