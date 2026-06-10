@@ -17,7 +17,7 @@
 
 ### 🚀 Live Demo
 
-http://20.244.37.205
+https://trackmail.adoniacyrus.com/
 
 ### 💻 GitHub Repository
 
@@ -420,7 +420,7 @@ TrackMail is deployed using:
 
 ### 🌐 Live URL
 
-http://20.244.37.205
+https://trackmail.adoniacyrus.com/
 
 ---
 
