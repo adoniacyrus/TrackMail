@@ -1,3 +1,4 @@
+import uuid
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
@@ -13,6 +14,7 @@ def generate_tracking_pixel(tracking_id):
     tracking_url = (
         f"{settings.SITE_URL}"
         f"/track/{tracking_id}/"
+        f"?r={uuid.uuid4().hex}"
     )
 
     return f"""

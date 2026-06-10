@@ -28,6 +28,12 @@ class EmailOpenEvent(models.Model):
         auto_now_add=True
     )
 
+    is_prefetch = models.BooleanField(
+        default=False,
+        null=True,
+        blank=True
+    )
+
     # Future-proof Geolocation fields
     country = models.CharField(
         max_length=100,

@@ -111,11 +111,16 @@ def email_detail_view(request, pk):
     )
 
     open_events = email.open_events.all().order_by('-opened_at')
+    open_events_chrono = email.open_events.all().order_by('opened_at')
+    total_opens_count = open_events.count()
+    unique_opens_count = email.open_events.values('ip_address').distinct().count()
 
     context = {
         'email': email,
         'open_events': open_events,
-        'open_count': open_events.count(),
+        'open_events_chrono': open_events_chrono,
+        'open_count': total_opens_count,
+        'unique_opens_count': unique_opens_count,
     }
 
     return render(

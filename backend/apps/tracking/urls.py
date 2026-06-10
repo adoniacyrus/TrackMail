@@ -9,4 +9,9 @@ urlpatterns = [
         track_email_open,
         name='track-email-open',
     ),
+    path(
+        'track/open/<uuid:tracking_id>/',
+        track_email_open,
+        name='track-email-open-alternate',
+    ),
 ]

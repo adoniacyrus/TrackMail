@@ -31,10 +31,25 @@ def get_dashboard_statistics(user):
         email__sender=user
     ).count()
 
+    # Get the latest open time
+    latest_event = EmailOpenEvent.objects.filter(
+        email__sender=user
+    ).order_by('-opened_at').first()
+    latest_open_time = latest_event.opened_at if latest_event else None
+
+    # Get emails with repeated opens
+    repeated_emails = emails.annotate(
+        num_opens=Count('open_events')
+    ).filter(
+        num_opens__gt=1
+    ).order_by('-num_opens')
+
     return {
         'total_emails': total_emails,
         'sent_emails': sent_emails,
         'failed_emails': failed_emails,
         'opened_emails': opened_emails,
         'total_open_events': total_open_events,
+        'latest_open_time': latest_open_time,
+        'repeated_emails': repeated_emails,
     }

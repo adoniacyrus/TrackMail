@@ -42,11 +42,11 @@
                 <div class="row g-2">
                     <div class="col-6">
                         <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">UNIQUE OPENS</span>
-                        <strong class="text-primary" style="font-size: 1rem;">{{ open_count }}</strong>
+                        <strong class="text-primary" style="font-size: 1rem;">{{ unique_opens_count }}</strong>
                     </div>
                     <div class="col-6">
-                        <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">TRACKING ID</span>
-                        <code class="text-dark small d-block text-truncate font-monospace" style="font-size: 0.75rem;" title="{{ email.tracking_id }}">{{ email.tracking_id }}</code>
+                        <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">TOTAL OPENS</span>
+                        <strong class="text-success" style="font-size: 1rem;">{{ open_count }}</strong>
                     </div>
                     <div class="col-6">
                         <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">CREATED UTC</span>
@@ -55,6 +55,10 @@
                     <div class="col-6">
                         <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">DELIVERED UTC</span>
                         <span class="text-muted small d-block font-monospace" style="font-size: 0.75rem;">{{ email.sent_at|date:"Y-m-d H:i:s"|default:"-" }}</span>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">TRACKING ID</span>
+                        <code class="text-dark small d-block text-truncate font-monospace" style="font-size: 0.75rem;" title="{{ email.tracking_id }}">{{ email.tracking_id }}</code>
                     </div>
                 </div>
             </div>
@@ -70,40 +74,36 @@
 </div>
 
 <!-- Logs Timeline Card -->
-<div class="card card-custom shadow-sm">
+<div class="card card-custom shadow-sm mb-3">
     <div class="card-header bg-white py-2.5 px-3 border-bottom">
-        <span class="fw-semibold text-dark small"><i class="bi bi-list-check text-muted me-1.5"></i> Open Events Timeline ({{ open_count }})</span>
+        <span class="fw-semibold text-dark small"><i class="bi bi-list-check text-muted me-1.5"></i> Open Events Timeline ({{ open_count }} total, {{ unique_opens_count }} unique)</span>
     </div>
     <div class="card-body p-0">
-        {% if open_events %}
-            <div class="table-responsive">
-                <table class="table table-custom table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Timestamp (UTC)</th>
-                            <th>IP Address</th>
-                            <th>User Agent (Client signature log)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for event in open_events %}
-                            <tr>
-                                <td class="font-monospace text-dark small" style="font-size: 0.775rem;">
-                                    {{ event.opened_at|date:"Y-m-d H:i:s" }}
-                                </td>
-                                <td>
-                                    <span class="badge bg-light text-dark border font-monospace" style="font-size: 0.725rem;">{{ event.ip_address|default:"Unknown" }}</span>
-                                </td>
-                                <td class="text-muted small" style="max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.775rem;" title="{{ event.user_agent }}">
-                                    {{ event.user_agent|default:"Unknown" }}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        {% if open_events_chrono %}
+            <div class="timeline">
+                {% for event in open_events_chrono %}
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            {{ forloop.counter }}
+                        </div>
+                        <div class="timeline-content">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="timeline-time">{{ event.opened_at|date:"Y-m-d H:i:s" }} UTC</span>
+                                <span class="text-muted font-monospace" style="font-size: 0.75rem;">{{ event.opened_at|timesince }} ago</span>
+                            </div>
+                            <div class="timeline-meta d-flex flex-wrap align-items-center gap-2">
+                                <span>IP Address: <span class="badge bg-light text-dark border font-monospace" style="font-size: 0.725rem;">{{ event.ip_address|default:"Unknown" }}</span></span>
+                                <span class="text-truncate" style="max-width: 400px;" title="{{ event.user_agent }}">User Agent: <code class="text-dark font-monospace" style="font-size: 0.75rem;">{{ event.user_agent|default:"Unknown" }}</code></span>
+                                {% if event.is_prefetch %}
+                                    <span class="badge bg-warning-subtle text-warning badge-custom"><i class="bi bi-robot"></i> Bot/Prefetch</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         {% else %}
-            <div class="text-center py-4 text-muted">
+            <div class="text-center py-5 text-muted">
                 <i class="bi bi-eye-slash fs-2 d-block mb-2 text-white-50"></i>
                 <p class="mb-0 small">No opens recorded for this message yet.</p>
             </div>
