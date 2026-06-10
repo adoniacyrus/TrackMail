@@ -1,45 +1,41 @@
 {% extends 'base.html' %}
 
-{% block title %}Email History{% endblock %}
-
 {% block content %}
-<div class="page-header">
+<div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h2 class="page-title">Email History</h2>
-        <p class="page-subtitle">Your complete correspondence log — delivery statuses and open counts.</p>
+        <h3 class="fw-bold mb-0 text-dark">Email History</h3>
+        <p class="text-muted small mb-0">Track delivery logs, statuses, and opens.</p>
     </div>
-    <div class="page-header-actions">
-        <a href="{% url 'compose-email' %}" class="btn btn-primary-custom">
-            <i class="bi bi-pencil-square me-2"></i> Compose Email
-        </a>
-    </div>
+    <a href="{% url 'compose-email' %}" class="btn btn-primary-custom btn-sm">
+        <i class="bi bi-pencil-square me-1"></i> Compose Email
+    </a>
 </div>
 
 <!-- Search Panel -->
-<div class="search-panel">
-    <form method="GET" action="{% url 'email-history' %}" class="row g-2 align-items-center">
-        <div class="col-md-10">
-            <div class="input-group">
-                <span class="input-group-text input-group-text-custom"><i class="bi bi-search"></i></span>
-                <input
-                    type="text"
-                    name="q"
-                    class="form-control form-control-custom"
-                    placeholder="Search by recipient address or subject line..."
-                    value="{{ query|default:'' }}"
-                >
+<div class="card card-custom mb-3 shadow-sm">
+    <div class="card-body p-2">
+        <form method="GET" action="{% url 'email-history' %}" class="row g-2">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 py-1.5"><i class="bi bi-search text-muted small"></i></span>
+                    <input
+                        type="text"
+                        name="q"
+                        class="form-control form-control-custom border-start-0 py-1.5"
+                        placeholder="Search by recipient or subject..."
+                        value="{{ query|default:'' }}"
+                    >
+                </div>
             </div>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-bronze w-100">
-                <i class="bi bi-search me-1"></i> Search
-            </button>
-        </div>
-    </form>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary btn-sm w-100 py-1.5">Search</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Table Panel -->
-<div class="card card-custom">
+<div class="card card-custom shadow-sm">
     <div class="card-body p-0">
         {% if page_obj %}
             <div class="table-responsive">
@@ -58,22 +54,22 @@
                         {% for email in page_obj %}
                             <tr>
                                 <td>
-                                    <span class="fw-semibold text-ink">{{ email.recipient_email }}</span>
+                                    <span class="fw-semibold text-dark">{{ email.recipient_email }}</span>
                                 </td>
                                 <td>
-                                    <span class="d-block text-truncate" style="max-width: 250px;" title="{{ email.subject }}">{{ email.subject }}</span>
+                                    <span class="d-block text-truncate" style="max-width: 200px;" title="{{ email.subject }}">{{ email.subject }}</span>
                                 </td>
                                 <td>
                                     {% if email.status == 'SENT' %}
-                                        <span class="badge badge-sent badge-custom"><i class="bi bi-check-circle-fill me-1"></i> Sent</span>
+                                        <span class="badge bg-success-subtle text-success badge-custom"><i class="bi bi-check-circle-fill me-0.5"></i> Sent</span>
                                     {% elif email.status == 'FAILED' %}
-                                        <span class="badge badge-failed badge-custom"><i class="bi bi-x-circle-fill me-1"></i> Failed</span>
+                                        <span class="badge bg-danger-subtle text-danger badge-custom"><i class="bi bi-x-circle-fill me-0.5"></i> Failed</span>
                                     {% else %}
-                                        <span class="badge badge-pending badge-custom"><i class="bi bi-hourglass-split me-1"></i> Pending</span>
+                                        <span class="badge bg-warning-subtle text-warning badge-custom"><i class="bi bi-hourglass-split me-0.5"></i> Pending</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge badge-opens badge-custom rounded-pill px-3">
+                                    <span class="badge bg-primary-subtle text-primary badge-custom rounded-pill px-2.5">
                                         {{ email.open_events.count }}
                                     </span>
                                 </td>
@@ -81,12 +77,12 @@
                                     {{ email.sent_at|date:"Y-m-d H:i:s"|default:"-" }}
                                 </td>
                                 <td class="text-end">
-                                    <div class="d-inline-flex gap-2">
-                                        <a href="{% url 'email-detail' email.id %}" class="btn btn-detail btn-detail-info" title="View details">
+                                    <div class="d-inline-flex gap-1.5">
+                                        <a href="{% url 'email-detail' email.id %}" class="btn btn-sm btn-info text-white py-1 px-2.5" style="font-size: 0.775rem;" title="View log events">
                                             <i class="bi bi-info-circle"></i> Details
                                         </a>
-                                        <button class="btn btn-detail btn-outline-bronze" disabled title="Resend features coming soon" style="cursor: not-allowed; opacity: 0.5;">
-                                            <i class="bi bi-arrow-clockwise"></i>
+                                        <button class="btn btn-sm btn-outline-secondary py-1 px-2.5" disabled title="Resend coming soon" style="cursor: not-allowed; opacity: 0.6; font-size: 0.775rem;">
+                                            <i class="bi bi-arrow-clockwise"></i> Resend
                                         </button>
                                     </div>
                                 </td>
@@ -96,9 +92,10 @@
                 </table>
             </div>
 
+            <!-- Custom Pagination -->
             {% if page_obj.has_other_pages %}
-                <nav aria-label="Page navigation" class="pagination-custom">
-                    <ul class="pagination justify-content-center mb-0">
+                <nav aria-label="Page navigation" class="p-3 border-top">
+                    <ul class="pagination pagination-sm justify-content-center mb-0">
                         {% if page_obj.has_previous %}
                             <li class="page-item">
                                 <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}" aria-label="First">
@@ -115,6 +112,7 @@
                         {% for num in page_obj.paginator.page_range %}
                             {% if page_obj.number == num %}
                                 <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            <!-- Show nearby pages only -->
                             {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
                                 <li class="page-item"><a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a></li>
                             {% endif %}
@@ -137,12 +135,12 @@
             {% endif %}
 
         {% else %}
-            <div class="empty-state">
-                <i class="bi bi-search empty-state-icon"></i>
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-search fs-2 d-block mb-2 text-white-50"></i>
                 {% if query %}
-                    <p>No sent emails match search query "{{ query }}".</p>
+                    <p class="mb-0 small">No sent emails match search query "{{ query }}".</p>
                 {% else %}
-                    <p>No emails sent yet. Send your first tracked email!</p>
+                    <p class="mb-0 small">No emails sent yet.</p>
                 {% endif %}
             </div>
         {% endif %}

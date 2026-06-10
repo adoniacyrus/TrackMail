@@ -1,146 +1,151 @@
 {% extends 'base.html' %}
 
-{% block title %}Compose{% endblock %}
-
 {% block content %}
-<div class="page-header">
-    <div>
-        <h2 class="page-title">Compose Tracked Email</h2>
-        <p class="page-subtitle">Write an elegant letter with embedded tracking — know the moment it's read.</p>
-    </div>
+<div class="mb-3">
+    <h3 class="fw-bold mb-0 text-dark">Compose Tracked Email</h3>
+    <p class="text-muted small mb-0">Create and queue a tracked email message with an embedded tracking pixel.</p>
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="compose-card">
-            <div class="compose-card-header">
-                <h5><i class="bi bi-envelope-plus"></i> New Correspondence</h5>
+    <div class="col-xl-9 col-lg-10">
+        
+        <!-- Feedback Alerts -->
+        <div id="alert-container">
+            <div id="success-alert" class="alert alert-success alert-dismissible fade show d-none py-2.5 px-3 small rounded-3 mb-3" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> <strong>Success!</strong> Email queued and sent successfully.
+                <button type="button" class="btn-close py-2.5" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="card-body p-4">
+            
+            <div id="error-alert" class="alert alert-danger alert-dismissible fade show d-none py-2.5 px-3 small rounded-3 mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error!</strong> <span id="error-msg">Failed to send email.</span>
+                <button type="button" class="btn-close py-2.5" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
 
-                <div id="alert-container">
-                    <div id="success-alert" class="alert alert-success alert-custom alert-dismissible fade show d-none" role="alert">
-                        <i class="bi bi-check-circle-fill me-2"></i> <strong>Success!</strong> Email queued and sent successfully.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-
-                    <div id="error-alert" class="alert alert-danger alert-custom alert-dismissible fade show d-none" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Error!</strong> <span id="error-msg">Failed to send email. Please check the inputs.</span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+        <!-- Premium Form Card -->
+        <div class="card card-custom shadow-sm mb-0">
+            <div class="card-header bg-white py-2.5 px-3 border-bottom d-flex align-items-center justify-content-between">
+                <span class="fw-semibold text-dark small"><i class="bi bi-envelope-plus text-primary me-1.5"></i> New Message</span>
+                <div class="d-flex align-items-center gap-1.5">
+                    <span class="bg-indigo rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: var(--primary-color);"></span>
+                    <span class="text-muted small font-monospace" style="font-size: 0.75rem;">Tracking Enabled</span>
                 </div>
-
+            </div>
+            
+            <div class="card-body p-3">
                 <form id="email-form" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Recipient Field -->
                     <div class="mb-3">
-                        <label class="form-label-custom" for="recipient_email">Recipient Email</label>
-                        <div class="input-group">
-                            <span class="input-group-text input-group-text-custom"><i class="bi bi-person-fill"></i></span>
-                            <input
-                                type="email"
-                                class="form-control form-control-custom"
-                                id="recipient_email"
-                                placeholder="recipient@example.com"
-                                required
-                            >
-                        </div>
-                        <div class="invalid-feedback d-block small mt-1 text-danger d-none" id="recipient-feedback">
-                            Please provide a valid email address.
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label-custom" for="subject">Subject</label>
+                        <label class="form-label fw-semibold text-dark small" for="recipient_email">Recipient Email</label>
                         <input
-                            type="text"
+                            type="email"
+                            id="recipient_email"
                             class="form-control form-control-custom"
-                            id="subject"
-                            placeholder="Enter the subject line..."
+                            placeholder="recipient@example.com"
                             required
                         >
-                        <div class="invalid-feedback d-block small mt-1 text-danger d-none" id="subject-feedback">
-                            Subject cannot be blank.
+                        <div class="invalid-feedback d-block small mt-1 text-danger d-none" id="recipient-feedback" style="font-size: 0.75rem;">
+                            <i class="bi bi-exclamation-circle"></i> Please provide a valid recipient email.
                         </div>
                     </div>
 
+                    <!-- Subject Field -->
                     <div class="mb-3">
-                        <label class="form-label-custom" for="body">Message Body</label>
+                        <label class="form-label fw-semibold text-dark small" for="subject">Subject</label>
+                        <input
+                            type="text"
+                            id="subject"
+                            class="form-control form-control-custom"
+                            placeholder="Enter the email subject..."
+                            required
+                        >
+                        <div class="invalid-feedback d-block small mt-1 text-danger d-none" id="subject-feedback" style="font-size: 0.75rem;">
+                            <i class="bi bi-exclamation-circle"></i> Subject cannot be blank.
+                        </div>
+                    </div>
+
+                    <!-- Body Field -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark small" for="body">Message Body</label>
                         <textarea
-                            class="form-control form-control-custom compose-textarea"
-                            rows="10"
                             id="body"
-                            placeholder="Write your message here. The tracking pixel will be inserted automatically at the end..."
+                            class="form-control form-control-custom"
+                            rows="7"
+                            placeholder="Write your email body message here. The pixel tracker will be embedded automatically at the end..."
                             required
                         ></textarea>
-                        <div class="invalid-feedback d-block small mt-1 text-danger d-none" id="body-feedback">
-                            Body content cannot be empty.
+                        <div class="invalid-feedback d-block small mt-1 text-danger d-none" id="body-feedback" style="font-size: 0.75rem;">
+                            <i class="bi bi-exclamation-circle"></i> Email body cannot be empty.
                         </div>
                     </div>
 
-                    <div class="compose-footer">
+                    <!-- Action Bar -->
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                        <span ><i ></i> </span>
                         <button
                             type="submit"
                             class="btn btn-primary-custom px-4"
                             id="submit-btn"
                         >
-                            <span class="spinner-border spinner-border-sm me-2 d-none" id="btn-spinner" role="status" aria-hidden="true"></span>
-                            <span id="btn-text"><i class="bi bi-send-fill me-2"></i> Send Tracked Email</span>
+                            <span class="spinner-border spinner-border-sm me-1.5 d-none" id="btn-spinner" role="status" aria-hidden="true"></span>
+                            <span id="btn-text"><i class="bi bi-send-fill me-1.5"></i> Send Email</span>
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
+        
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById('email-form');
     const recipientInput = document.getElementById('recipient_email');
     const subjectInput = document.getElementById('subject');
     const bodyInput = document.getElementById('body');
-
+    
     const recipientFeedback = document.getElementById('recipient-feedback');
     const subjectFeedback = document.getElementById('subject-feedback');
     const bodyFeedback = document.getElementById('body-feedback');
-
+    
     const successAlert = document.getElementById('success-alert');
     const errorAlert = document.getElementById('error-alert');
     const errorMsg = document.getElementById('error-msg');
-
+    
     const submitBtn = document.getElementById('submit-btn');
     const btnSpinner = document.getElementById('btn-spinner');
     const btnText = document.getElementById('btn-text');
 
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
-
+        
         hideAlerts();
         resetValidation();
-
+        
         let isValid = true;
-
+        
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(recipientInput.value.trim())) {
             recipientInput.classList.add('is-invalid');
             recipientFeedback.classList.remove('d-none');
             isValid = false;
         }
-
+        
         if (subjectInput.value.trim() === '') {
             subjectInput.classList.add('is-invalid');
             subjectFeedback.classList.remove('d-none');
             isValid = false;
         }
-
+        
         if (bodyInput.value.trim() === '') {
             bodyInput.classList.add('is-invalid');
             bodyFeedback.classList.remove('d-none');
             isValid = false;
         }
-
+        
         if (!isValid) return;
 
         submitBtn.disabled = true;
@@ -170,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 form.reset();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
-                let errorDetails = "Failed to send email. Please check your data.";
+                let errorDetails = "Failed to send email.";
                 if (data.recipient_email) {
                     errorDetails = `Recipient email error: ${data.recipient_email.join(' ')}`;
                 } else if (data.message) {
@@ -187,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function() {
         } finally {
             submitBtn.disabled = false;
             btnSpinner.classList.add('d-none');
-            btnText.innerHTML = '<i class="bi bi-send-fill me-2"></i> Send Tracked Email';
+            btnText.innerHTML = '<i class="bi bi-send-fill me-1.5"></i> Send Tracked Email';
         }
     });
 
@@ -201,17 +206,17 @@ document.addEventListener("DOMContentLoaded", function() {
             return '';
         }
     }
-
+    
     function hideAlerts() {
         successAlert.classList.add('d-none');
         errorAlert.classList.add('d-none');
     }
-
+    
     function resetValidation() {
         recipientInput.classList.remove('is-invalid');
         subjectInput.classList.remove('is-invalid');
         bodyInput.classList.remove('is-invalid');
-
+        
         recipientFeedback.classList.add('d-none');
         subjectFeedback.classList.add('d-none');
         bodyFeedback.classList.add('d-none');

@@ -1,111 +1,111 @@
 {% extends 'base.html' %}
 
-{% block title %}Email Detail{% endblock %}
-
 {% block content %}
-<div class="page-header">
+<div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <a href="{% url 'email-history' %}" class="back-link">
+        <a href="{% url 'email-history' %}" class="btn btn-outline-secondary btn-sm mb-2 py-1 px-2.5" style="font-size: 0.775rem;">
             <i class="bi bi-arrow-left"></i> Back to History
         </a>
-        <h2 class="page-title">Email Tracking Log</h2>
-        <p class="page-subtitle">Real-time open alerts and delivery properties for this message.</p>
+        <h3 class="fw-bold mb-0 text-dark">Email Details</h3>
+        <p class="text-muted small mb-0">Delivery metadata and real-time open timestamps.</p>
     </div>
 </div>
 
-<!-- Message Details Card -->
-<div class="card card-custom mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <span><i class="bi bi-envelope-paper text-bronze me-2"></i> Message Specifications</span>
+<!-- Detailed Grid Card -->
+<div class="card card-custom mb-3 shadow-sm">
+    <div class="card-header bg-white py-2.5 px-3 d-flex justify-content-between align-items-center">
+        <span class="fw-semibold text-dark small"><i class="bi bi-info-circle text-primary me-1.5"></i> Specifications</span>
         <div>
             {% if email.status == 'SENT' %}
-                <span class="badge badge-sent badge-custom"><i class="bi bi-check-circle-fill me-1"></i> Sent Successfully</span>
+                <span class="badge bg-success-subtle text-success badge-custom"><i class="bi bi-check-circle-fill me-0.5"></i> Sent</span>
             {% elif email.status == 'FAILED' %}
-                <span class="badge badge-failed badge-custom"><i class="bi bi-x-circle-fill me-1"></i> Delivery Failed</span>
+                <span class="badge bg-danger-subtle text-danger badge-custom"><i class="bi bi-x-circle-fill me-0.5"></i> Failed</span>
             {% else %}
-                <span class="badge badge-pending badge-custom"><i class="bi bi-hourglass-split me-1"></i> Outbox Queue</span>
+                <span class="badge bg-warning-subtle text-warning badge-custom"><i class="bi bi-hourglass-split me-0.5"></i> Outbox Queue</span>
             {% endif %}
         </div>
     </div>
-    <div class="card-body p-4">
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <span class="stat-card-label">Recipient Address</span>
-                    <strong class="text-ink fs-5 font-monospace d-block">{{ email.recipient_email }}</strong>
+    <div class="card-body p-3">
+        <div class="row g-3">
+            <div class="col-md-6 border-end">
+                <div class="mb-2.5">
+                    <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">RECIPIENT ADDRESS</span>
+                    <strong class="text-dark font-monospace" style="font-size: 0.85rem;">{{ email.recipient_email }}</strong>
                 </div>
                 <div>
-                    <span class="stat-card-label">Subject Line</span>
-                    <strong class="text-ink fs-5 d-block">{{ email.subject }}</strong>
+                    <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">SUBJECT LINE</span>
+                    <strong class="text-dark" style="font-size: 0.85rem;">{{ email.subject }}</strong>
                 </div>
             </div>
-
+            
             <div class="col-md-6">
-                <div class="detail-stat-grid">
-                    <div class="detail-stat-item">
-                        <span class="label">Unique Opens</span>
-                        <span class="value">{{ open_count }}</span>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">UNIQUE OPENS</span>
+                        <strong class="text-primary" style="font-size: 1rem;">{{ open_count }}</strong>
                     </div>
-                    <div class="detail-stat-item">
-                        <span class="label">Tracking ID</span>
-                        <span class="value-sm" title="{{ email.tracking_id }}">{{ email.tracking_id }}</span>
+                    <div class="col-6">
+                        <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">TRACKING ID</span>
+                        <code class="text-dark small d-block text-truncate font-monospace" style="font-size: 0.75rem;" title="{{ email.tracking_id }}">{{ email.tracking_id }}</code>
                     </div>
-                    <div class="detail-stat-item">
-                        <span class="label">Created</span>
-                        <span class="value-sm">{{ email.created_at|date:"Y-m-d H:i:s" }} UTC</span>
+                    <div class="col-6">
+                        <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">CREATED UTC</span>
+                        <span class="text-muted small d-block font-monospace" style="font-size: 0.75rem;">{{ email.created_at|date:"Y-m-d H:i:s" }}</span>
                     </div>
-                    <div class="detail-stat-item">
-                        <span class="label">Delivered</span>
-                        <span class="value-sm">{{ email.sent_at|date:"Y-m-d H:i:s"|default:"-" }} UTC</span>
+                    <div class="col-6">
+                        <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">DELIVERED UTC</span>
+                        <span class="text-muted small d-block font-monospace" style="font-size: 0.75rem;">{{ email.sent_at|date:"Y-m-d H:i:s"|default:"-" }}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <hr class="my-4" style="border-color: var(--paper-border);">
+        <hr class="my-3">
 
-        <div>
-            <span class="stat-card-label mb-2 d-block">Message Preview</span>
-            <div class="letter-preview">{{ email.body }}</div>
+        <div class="mb-0">
+            <span class="text-muted d-block small fw-semibold mb-1.5" style="font-size: 0.725rem;">EMAIL BODY PREVIEW</span>
+            <div class="p-2.5 bg-light border rounded-3 font-monospace text-dark" style="white-space: pre-wrap; font-size: 0.8rem; max-height: 140px; overflow-y: auto;">{{ email.body }}</div>
         </div>
     </div>
 </div>
 
-<!-- Open Events Timeline -->
-<div class="card card-custom">
-    <div class="card-header">
-        <span><i class="bi bi-list-check text-bronze me-2"></i> Open Events ({{ open_count }})</span>
+<!-- Logs Timeline Card -->
+<div class="card card-custom shadow-sm">
+    <div class="card-header bg-white py-2.5 px-3 border-bottom">
+        <span class="fw-semibold text-dark small"><i class="bi bi-list-check text-muted me-1.5"></i> Open Events Timeline ({{ open_count }})</span>
     </div>
     <div class="card-body p-0">
         {% if open_events %}
-            <div class="timeline">
-                {% for event in open_events %}
-                    <div class="timeline-item">
-                        <div class="timeline-marker">
-                            <i class="bi bi-eye"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <div class="timeline-time">
-                                <i class="bi bi-clock me-1"></i> {{ event.opened_at|date:"Y-m-d H:i:s" }} UTC
-                            </div>
-                            <div class="timeline-meta">
-                                <span>
-                                    <i class="bi bi-globe me-1"></i> IP:
-                                    <code>{{ event.ip_address|default:"Unknown" }}</code>
-                                </span>
-                                <span title="{{ event.user_agent }}">
-                                    <i class="bi bi-laptop me-1"></i>
-                                    {{ event.user_agent|default:"Unknown client"|truncatechars:60 }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+            <div class="table-responsive">
+                <table class="table table-custom table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Timestamp (UTC)</th>
+                            <th>IP Address</th>
+                            <th>User Agent (Client signature log)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in open_events %}
+                            <tr>
+                                <td class="font-monospace text-dark small" style="font-size: 0.775rem;">
+                                    {{ event.opened_at|date:"Y-m-d H:i:s" }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border font-monospace" style="font-size: 0.725rem;">{{ event.ip_address|default:"Unknown" }}</span>
+                                </td>
+                                <td class="text-muted small" style="max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.775rem;" title="{{ event.user_agent }}">
+                                    {{ event.user_agent|default:"Unknown" }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         {% else %}
-            <div class="empty-state">
-                <i class="bi bi-eye-slash empty-state-icon"></i>
-                <p>No opens recorded for this message yet. The recipient has not loaded the tracking pixel.</p>
+            <div class="text-center py-4 text-muted">
+                <i class="bi bi-eye-slash fs-2 d-block mb-2 text-white-50"></i>
+                <p class="mb-0 small">No opens recorded for this message yet.</p>
             </div>
         {% endif %}
     </div>
