@@ -32,6 +32,7 @@ https://github.com/adoniacyrus/TrackMail
 TrackMail is a modern SaaS-style email tracking platform that enables users to:
 
 * 📩 Send trackable emails
+* 🖼️ Inject invisible tracking pixels into emails to detect real-time email opens
 * 📊 Monitor email opens in real time
 * ⚡ Process emails asynchronously using Celery
 * 🔐 Manage user-specific dashboards securely
@@ -161,6 +162,16 @@ Analytics Stored in MySQL
 ---
 
 # 🗄 Database Schema
+
+## 📌 Core Relationship Design
+* One User → Many Emails
+      - Each authenticated user can create and manage multiple trackable emails while maintaining strict ownership isolation.
+* One Email → Many Tracking Events
+      - Every sent email can generate multiple tracking events such as email opens, allowing real-time engagement analytics.
+* Many Tracking Events → One Email
+      - Multiple open events are associated with a single email record through foreign key relationships for accurate tracking history.
+* One Tracking Pixel → One Email
+      - Each email contains a unique invisible tracking pixel used to detect when recipients open the email.
 
 TrackMail utilizes a relational MySQL schema designed to support:
 
