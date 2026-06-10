@@ -435,3 +435,14 @@ https://trackmail.adoniacyrus.com/
 
 ---
 
+## Current Email Infrastructure
+
+TrackMail currently uses a centralized SMTP configuration for development and demonstration purposes.
+
+All outgoing emails are routed through a single SMTP provider account configured via environment variables.
+
+Future enhancements may include:
+- Per-user SMTP integration
+- OAuth-based provider connections
+- SMTP isolation per workspace/user
+- Rate limiting and abuse prevention
