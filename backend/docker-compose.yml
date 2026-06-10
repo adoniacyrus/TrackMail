@@ -1,7 +1,6 @@
 services:
 
   web:
-
     build: .
 
     command: gunicorn --bind 0.0.0.0:8000 config.wsgi:application
@@ -20,14 +19,12 @@ services:
       - db
 
   redis:
-
     image: redis:latest
 
     ports:
       - "6379:6379"
 
   db:
-
     image: mysql:8.0
 
     restart: always
@@ -36,14 +33,11 @@ services:
       MYSQL_DATABASE: trackmail
       MYSQL_ROOT_PASSWORD: rootpassword
 
-    ports:
-      - "3306:3306"
 
     volumes:
       - mysql_data:/var/lib/mysql
 
   celery:
-
     build: .
 
     command: celery -A config worker -l info --pool=solo
@@ -59,7 +53,6 @@ services:
       - db
 
   nginx:
-
     image: nginx:latest
 
     ports:
@@ -73,5 +66,4 @@ services:
       - web
 
 volumes:
-
   mysql_data:

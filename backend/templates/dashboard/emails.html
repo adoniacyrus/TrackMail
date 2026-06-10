@@ -1,83 +1,148 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h2 class="mb-4">
-    Email History
-</h2>
-
-<div class="card">
-
-    <div class="card-body">
-
-        <table class="table table-striped">
-
-            <thead>
-
-                <tr>
-
-                    <th>Recipient</th>
-
-                    <th>Subject</th>
-
-                    <th>Status</th>
-
-                    <th>Open Count</th>
-
-                    <th>Sent At</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="email-table-body">
-
-            </tbody>
-
-        </table>
-
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Email History</h2>
+        <p class="text-muted small mb-0">List of sent emails, delivery statuses, and open counts.</p>
     </div>
-
+    <a href="{% url 'compose-email' %}" class="btn btn-primary-custom">
+        <i class="bi bi-pencil-square me-2"></i> Compose Email
+    </a>
 </div>
 
-<script>
+<!-- Search Panel -->
+<div class="card card-custom mb-4">
+    <div class="card-body p-3">
+        <form method="GET" action="{% url 'email-history' %}" class="row g-2">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input
+                        type="text"
+                        name="q"
+                        class="form-control form-control-custom border-start-0"
+                        placeholder="Search by recipient address or subject line..."
+                        value="{{ query|default:'' }}"
+                    >
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary w-100">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-async function loadEmails() {
+<!-- Table Panel -->
+<div class="card card-custom">
+    <div class="card-body p-0">
+        {% if page_obj %}
+            <div class="table-responsive">
+                <table class="table table-custom table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th class="text-center">Opens</th>
+                            <th>Sent At (UTC)</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for email in page_obj %}
+                            <tr>
+                                <td>
+                                    <span class="fw-semibold text-dark">{{ email.recipient_email }}</span>
+                                </td>
+                                <td>
+                                    <span class="d-block text-truncate" style="max-width: 250px;" title="{{ email.subject }}">{{ email.subject }}</span>
+                                </td>
+                                <td>
+                                    {% if email.status == 'SENT' %}
+                                        <span class="badge bg-success-subtle text-success badge-custom"><i class="bi bi-check-circle-fill me-1"></i> Sent</span>
+                                    {% elif email.status == 'FAILED' %}
+                                        <span class="badge bg-danger-subtle text-danger badge-custom"><i class="bi bi-x-circle-fill me-1"></i> Failed</span>
+                                    {% else %}
+                                        <span class="badge bg-warning-subtle text-warning badge-custom"><i class="bi bi-hourglass-split me-1"></i> Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary-subtle text-primary badge-custom rounded-pill px-3">
+                                        {{ email.open_events.count }}
+                                    </span>
+                                </td>
+                                <td class="font-monospace text-muted small">
+                                    {{ email.sent_at|date:"Y-m-d H:i:s"|default:"-" }}
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2">
+                                        <a href="{% url 'email-detail' email.id %}" class="btn btn-sm btn-info text-white" title="View Detail logs">
+                                            <i class="bi bi-info-circle"></i> Details
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled title="Resend features coming soon" style="cursor: not-allowed; opacity: 0.6;">
+                                            <i class="bi bi-arrow-clockwise"></i> Resend
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-    const response =
-        await fetch('/api/emails/')
+            <!-- Custom Pagination -->
+            {% if page_obj.has_other_pages %}
+                <nav aria-label="Page navigation" class="p-4 border-top">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}" aria-label="First">
+                                    <i class="bi bi-chevron-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Previous">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
 
-    const emails =
-        await response.json()
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
 
-    const tableBody =
-        document.getElementById('email-table-body')
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Next">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}" aria-label="Last">
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
 
-    tableBody.innerHTML = ''
-
-    emails.forEach(email => {
-
-        tableBody.innerHTML += `
-
-            <tr>
-
-                <td>${email.recipient_email}</td>
-
-                <td>${email.subject}</td>
-
-                <td>${email.status}</td>
-
-                <td>${email.open_count}</td>
-
-                <td>${email.sent_at || '-'}</td>
-
-            </tr>
-        `
-    })
-}
-
-loadEmails()
-
-</script>
-
+        {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-search fs-1 d-block mb-3 text-white-50"></i>
+                {% if query %}
+                    <p class="mb-0">No sent emails match search query "{{ query }}".</p>
+                {% else %}
+                    <p class="mb-0">No emails sent yet. Send your first tracked email!</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

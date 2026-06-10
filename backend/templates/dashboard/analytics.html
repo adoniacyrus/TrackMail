@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold mb-1">Email Analytics</h2>
+    <p class="text-muted small mb-0">Detailed insights into open rates, active times, and recipient client profiles.</p>
+</div>
+
+<!-- Aggregated Metrics -->
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-md-4">
+        <div class="card stat-card primary h-100">
+            <div class="card-body p-4 text-center">
+                <span class="text-muted d-block small fw-semibold mb-2">TOTAL EMAILS SENT</span>
+                <strong class="display-6 fw-bold text-dark">{{ total_emails }}</strong>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-4">
+        <div class="card stat-card success h-100">
+            <div class="card-body p-4 text-center">
+                <span class="text-muted d-block small fw-semibold mb-2">UNIQUE EMAILS OPENED</span>
+                <strong class="display-6 fw-bold text-dark">{{ opened_emails }}</strong>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+        <div class="card stat-card warning text-dark h-100">
+            <div class="card-body p-4 text-center">
+                <span class="text-muted d-block small fw-semibold mb-2">AVERAGE OPEN RATE</span>
+                <strong class="display-6 fw-bold text-dark">{{ open_rate }}%</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Panel -->
+<div class="card card-custom mb-4">
+    <div class="card-header border-0 bg-white pt-4 px-4 d-flex justify-content-between align-items-center">
+        <h5 class="m-0 fw-semibold"><i class="bi bi-graph-up text-primary me-2"></i> Open History (Last 30 Days)</h5>
+    </div>
+    <div class="card-body p-4">
+        {% if daily_opens %}
+            <div style="position: relative; height: 260px; width: 100%;">
+                <canvas id="opensChart"></canvas>
+            </div>
+        {% else %}
+            <div class="text-center py-5 text-muted">
+                <p class="mb-0">Insufficient data to plot historical trends. Once recipients open your emails, a daily timeline will appear here.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Global Tracking Event Log -->
+<div class="card card-custom">
+    <div class="card-header bg-white pt-4 px-4 border-bottom pb-3">
+        <h5 class="m-0 fw-semibold"><i class="bi bi-list-stars text-muted me-2"></i> Open Activity Timeline Log</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if open_events %}
+            <div class="table-responsive">
+                <table class="table table-custom table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Email Subject</th>
+                            <th>Recipient</th>
+                            <th>IP Address</th>
+                            <th>User Agent (Client)</th>
+                            <th>Opened At (UTC)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in open_events %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'email-detail' event.email.id %}" class="fw-semibold text-dark text-decoration-none">
+                                        {{ event.email.subject }}
+                                    </a>
+                                </td>
+                                <td><code>{{ event.email.recipient_email }}</code></td>
+                                <td><span class="badge bg-light text-dark border font-monospace">{{ event.ip_address|default:"Unknown" }}</span></td>
+                                <td class="text-muted small" style="max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ event.user_agent }}">
+                                    {{ event.user_agent|default:"Unknown" }}
+                                </td>
+                                <td class="font-monospace text-muted small">
+                                    {{ event.opened_at|date:"Y-m-d H:i:s" }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-clock-history fs-1 d-block mb-3 text-white-50"></i>
+                <p class="mb-0">No opens recorded yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if daily_opens %}
+<!-- Chart JS initialization script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('opensChart').getContext('2d');
+        const dates = [{% for item in daily_opens %}"{{ item.date|date:'M d' }}",{% endfor %}];
+        const counts = [{% for item in daily_opens %}{{ item.count }},{% endfor %}];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Email Opens',
+                    data: counts,
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.08)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#4f46e5',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        padding: 12,
+                        backgroundColor: '#0f172a',
+                        titleFont: { size: 13, weight: 'bold' },
+                        bodyFont: { size: 13 },
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            font: { family: 'Plus Jakarta Sans', size: 11 }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: '#e2e8f0'
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            font: { family: 'Plus Jakarta Sans', size: 11 },
+                            stepSize: 1,
+                            precision: 0
+                        },
+                        min: 0
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endif %}
+
+{% endblock %}

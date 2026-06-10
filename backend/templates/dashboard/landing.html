@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block public_content %}
+<!-- Hero Section -->
+<section class="landing-hero text-center text-lg-start">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-3">
+                    Track Your Emails in <span class="gradient-text">Real-Time</span>
+                </h1>
+                <p class="lead text-muted mb-4">
+                    Know exactly when, where, and on what device your recipients open your emails. Increase engagement and close more deals.
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
+                    <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg px-4 fs-6">
+                        Start Tracking Free <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                    <a href="#features" class="btn btn-outline-secondary btn-lg px-4 fs-6">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <!-- Dashboard Mockup Preview -->
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                    <div class="bg-dark p-3 d-flex align-items-center gap-2">
+                        <span class="bg-danger rounded-circle d-inline-block" style="width:12px; height:12px;"></span>
+                        <span class="bg-warning rounded-circle d-inline-block" style="width:12px; height:12px;"></span>
+                        <span class="bg-success rounded-circle d-inline-block" style="width:12px; height:12px;"></span>
+                        <span class="text-white-50 ms-2 small">TrackMail Dashboard</span>
+                    </div>
+                    <div class="card-body p-4 bg-light">
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <div class="bg-white p-3 border rounded-3 text-center">
+                                    <small class="text-muted d-block">Open Rate</small>
+                                    <strong class="fs-4 gradient-text">84.2%</strong>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="bg-white p-3 border rounded-3 text-center">
+                                    <small class="text-muted d-block">Total Emails</small>
+                                    <strong class="fs-4 text-dark">1,248</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 border rounded-3">
+                            <h6 class="mb-3 border-bottom pb-2"><i class="bi bi-clock-history text-indigo"></i> Recent Activity</h6>
+                            <div class="d-flex justify-content-between align-items-center mb-2 small">
+                                <span>Subject: Proposal V2</span>
+                                <span class="badge bg-success-subtle text-success">Opened 2m ago</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span>Subject: Client Call</span>
+                                <span class="badge bg-warning-subtle text-warning">Opened 1h ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="text-center max-w-2xl mx-auto mb-5">
+            <h2 class="fw-bold">Features Built for Modern Teams</h2>
+            <p class="text-muted">Everything you need to track, monitor, and optimize your email communications.</p>
+        </div>
+        <div class="row g-4 mt-2">
+            <div class="col-md-4">
+                <div class="landing-card">
+                    <div class="landing-card-icon">
+                        <i class="bi bi-pixel-fill"></i>
+                    </div>
+                    <h4>Invisible Tracking Pixel</h4>
+                    <p class="text-muted mb-0">
+                        We embed an invisible 1x1 image in your HTML emails. When the recipient opens the mail, the pixel fires instantly.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="landing-card">
+                    <div class="landing-card-icon">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <h4>IP & Geolocation Log</h4>
+                    <p class="text-muted mb-0">
+                        Record user IP addresses, network user agents, and timestamps securely to identify client configurations.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="landing-card">
+                    <div class="landing-card-icon">
+                        <i class="bi bi-bar-chart-fill"></i>
+                    </div>
+                    <h4>Analytics & Timeline</h4>
+                    <p class="text-muted mb-0">
+                        Explore daily timelines of opens, unique open metrics, and general delivery status logs in our clean charts.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA & Footer -->
+<section class="py-5 bg-light border-top">
+    <div class="container text-center py-4">
+        <h3 class="fw-bold mb-3">Get Started with TrackMail Today</h3>
+        <p class="text-muted mb-4 max-w-xl mx-auto">Create an account in less than a minute and start tracking your outreach campaigns with our intuitive dashboard.</p>
+        <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg px-5">Create Free Account</a>
+    </div>
+</section>
+
+<footer class="py-4 bg-white border-top">
+    <div class="container text-center text-muted small">
+        <p class="mb-0">&copy; 2026 TrackMail Inc. All rights reserved.</p>
+    </div>
+</footer>
+{% endblock %}
