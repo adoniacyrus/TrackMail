@@ -81,9 +81,12 @@
                                         <a href="{% url 'email-detail' email.id %}" class="btn btn-sm btn-info text-white py-1 px-2.5" style="font-size: 0.775rem;" title="View log events">
                                             <i class="bi bi-info-circle"></i> Details
                                         </a>
-                                        <button class="btn btn-sm btn-outline-secondary py-1 px-2.5" disabled title="Resend coming soon" style="cursor: not-allowed; opacity: 0.6; font-size: 0.775rem;">
-                                            <i class="bi bi-arrow-clockwise"></i> Resend
-                                        </button>
+                                        <form method="POST" action="{% url 'email-resend' email.id %}" class="m-0 resend-form d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary py-1 px-2.5" style="font-size: 0.775rem;" title="Resend this email asynchronously">
+                                                <i class="bi bi-arrow-clockwise"></i> Resend
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -146,4 +149,19 @@
         {% endif %}
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const resendForms = document.querySelectorAll('.resend-form');
+    resendForms.forEach(form => {
+        form.addEventListener('submit', function() {
+            const btn = form.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

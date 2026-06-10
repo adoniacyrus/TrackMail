@@ -7,6 +7,7 @@ from apps.dashboard.views import (
     email_history_view,
     email_detail_view,
     analytics_view,
+    email_resend_view,
 )
 
 urlpatterns = [
@@ -34,6 +35,11 @@ urlpatterns = [
         'emails/<int:pk>/',
         email_detail_view,
         name='email-detail'
+    ),
+    path(
+        'emails/<int:pk>/resend/',
+        email_resend_view,
+        name='email-resend'
     ),
     path(
         'analytics/',

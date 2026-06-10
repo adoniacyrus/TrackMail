@@ -3,9 +3,12 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Count
 from django.db.models.functions import TruncDate
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 from apps.emails.models import Email
 from apps.tracking.models import EmailOpenEvent
+from apps.emails.tasks import send_tracking_email_task
 from apps.dashboard.services.analytics_service import (
     get_dashboard_statistics
 )
@@ -167,3 +170,32 @@ def analytics_view(request):
         'dashboard/analytics.html',
         context
     )
+
+
+@login_required
+@require_POST
+def email_resend_view(request, pk):
+    """
+    Clones and re-queues an email for resending.
+    """
+    parent_email = get_object_or_404(
+        Email,
+        pk=pk,
+        sender=request.user
+    )
+
+    # Clone the email into a new record with a new tracking identifier
+    new_email = Email.objects.create(
+        sender=request.user,
+        recipient_email=parent_email.recipient_email,
+        subject=parent_email.subject,
+        body=parent_email.body
+    )
+
+    # Queue via Celery task
+    send_tracking_email_task.delay(new_email.id)
+
+    # Add alert feedback message
+    messages.success(request, "Email queued for resend successfully.")
+
+    return redirect('email-history')
