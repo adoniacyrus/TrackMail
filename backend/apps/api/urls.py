@@ -9,6 +9,10 @@ from apps.api.views.email_views import (
 from apps.api.views.tracking_views import (
     TrackingEventListAPIView
 )
+from apps.api.views.live_views import (
+    dashboard_stats_api_view,
+    email_stats_api_view,
+)
 
 urlpatterns = [
 
@@ -28,5 +32,17 @@ urlpatterns = [
         'tracking-events/',
         TrackingEventListAPIView.as_view(),
         name='api-tracking-events',
+    ),
+
+    path(
+        'email/<int:pk>/stats/',
+        email_stats_api_view,
+        name='api-email-stats',
+    ),
+
+    path(
+        'dashboard/stats/',
+        dashboard_stats_api_view,
+        name='api-dashboard-stats',
     ),
 ]

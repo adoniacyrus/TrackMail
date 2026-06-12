@@ -6,7 +6,13 @@
         <a href="{% url 'email-history' %}" class="btn btn-outline-secondary btn-sm mb-2 py-1 px-2.5" style="font-size: 0.775rem;">
             <i class="bi bi-arrow-left"></i> Back to History
         </a>
-        <h3 class="fw-bold mb-0 text-dark">Email Details</h3>
+        <div class="d-flex align-items-center gap-2">
+            <h3 class="fw-bold mb-0 text-dark">Email Details</h3>
+            <span class="badge bg-success-subtle text-success d-flex align-items-center gap-1.5 py-1 px-2.5 rounded-pill border border-success-subtle" style="font-size: 0.725rem;">
+                <span id="live-indicator-dot" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" style="width: 0.5rem; height: 0.5rem; animation-duration: 1.5s;"></span>
+                Live Tracking Active
+            </span>
+        </div>
         <p class="text-muted small mb-0">Delivery metadata and real-time open timestamps.</p>
     </div>
 </div>
@@ -42,11 +48,11 @@
                 <div class="row g-2">
                     <div class="col-6">
                         <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">UNIQUE OPENS</span>
-                        <strong class="text-primary" style="font-size: 1rem;">{{ unique_opens_count }}</strong>
+                        <strong class="text-primary" id="detail-unique-opens" style="font-size: 1rem;">{{ unique_opens_count }}</strong>
                     </div>
                     <div class="col-6">
                         <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">TOTAL OPENS</span>
-                        <strong class="text-success" style="font-size: 1rem;">{{ open_count }}</strong>
+                        <strong class="text-success" id="detail-total-opens" style="font-size: 1rem;">{{ open_count }}</strong>
                     </div>
                     <div class="col-6">
                         <span class="text-muted d-block small fw-semibold mb-0.5" style="font-size: 0.725rem;">CREATED UTC</span>
@@ -76,13 +82,13 @@
 <!-- Logs Timeline Card -->
 <div class="card card-custom shadow-sm mb-3">
     <div class="card-header bg-white py-2.5 px-3 border-bottom">
-        <span class="fw-semibold text-dark small"><i class="bi bi-list-check text-muted me-1.5"></i> Open Events Timeline ({{ open_count }} total, {{ unique_opens_count }} unique)</span>
+        <span class="fw-semibold text-dark small" id="detail-timeline-title"><i class="bi bi-list-check text-muted me-1.5"></i> Open Events Timeline ({{ open_count }} total, {{ unique_opens_count }} unique)</span>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body p-0" id="detail-timeline-container">
         {% if open_events_chrono %}
             <div class="timeline">
                 {% for event in open_events_chrono %}
-                    <div class="timeline-item">
+                    <div class="timeline-item" data-event-id="{{ event.id }}">
                         <div class="timeline-marker">
                             {{ forloop.counter }}
                         </div>
@@ -110,4 +116,142 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const EMAIL_STATS_URL = "{% url 'api-email-stats' email.id %}";
+        const POLL_INTERVAL = 5000; // 5 seconds
+        let isFetching = false;
+
+        // Helper to escape HTML and prevent XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;');
+        }
+
+        function pollEmailStats() {
+            if (isFetching) return;
+            isFetching = true;
+
+            // Subtle loading indicator: switch grow to border
+            const dot = document.getElementById('live-indicator-dot');
+            if (dot) {
+                dot.className = 'spinner-border spinner-border-sm';
+                dot.style.width = '0.5rem';
+                dot.style.height = '0.5rem';
+                dot.style.borderWidth = '0.125em';
+            }
+
+            fetch(EMAIL_STATS_URL)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    // Update counters with animations if changed
+                    const uniqueEl = document.getElementById('detail-unique-opens');
+                    if (uniqueEl && uniqueEl.textContent.trim() !== String(data.unique_opens_count)) {
+                        uniqueEl.textContent = data.unique_opens_count;
+                        uniqueEl.classList.remove('pulse-badge');
+                        void uniqueEl.offsetWidth; // trigger reflow
+                        uniqueEl.classList.add('pulse-badge');
+                    }
+
+                    const totalEl = document.getElementById('detail-total-opens');
+                    if (totalEl && totalEl.textContent.trim() !== String(data.open_count)) {
+                        totalEl.textContent = data.open_count;
+                        totalEl.classList.remove('pulse-badge');
+                        void totalEl.offsetWidth; // trigger reflow
+                        totalEl.classList.add('pulse-badge');
+                    }
+
+                    // Update timeline title
+                    const titleEl = document.getElementById('detail-timeline-title');
+                    if (titleEl) {
+                        titleEl.innerHTML = `<i class="bi bi-list-check text-muted me-1.5"></i> Open Events Timeline (${data.open_count} total, ${data.unique_opens_count} unique)`;
+                    }
+
+                    // Update timeline container
+                    const container = document.getElementById('detail-timeline-container');
+                    if (container) {
+                        if (data.events && data.events.length > 0) {
+                            let timelineEl = container.querySelector('.timeline');
+                            if (!timelineEl) {
+                                container.innerHTML = '<div class="timeline"></div>';
+                                timelineEl = container.querySelector('.timeline');
+                            }
+
+                            // Get existing event IDs
+                            const existingIds = Array.from(timelineEl.querySelectorAll('.timeline-item')).map(
+                                el => parseInt(el.getAttribute('data-event-id'))
+                            );
+
+                            data.events.forEach(event => {
+                                if (!existingIds.includes(event.id)) {
+                                    const botBadge = event.is_prefetch 
+                                        ? '<span class="badge bg-warning-subtle text-warning badge-custom"><i class="bi bi-robot"></i> Bot/Prefetch</span>' 
+                                        : '';
+                                    
+                                    const itemHtml = `
+                                        <div class="timeline-item highlight-new-item" data-event-id="${event.id}">
+                                            <div class="timeline-marker">
+                                                ${event.counter}
+                                            </div>
+                                            <div class="timeline-content">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="timeline-time">${escapeHtml(event.opened_at_formatted)} UTC</span>
+                                                    <span class="text-muted font-monospace" style="font-size: 0.75rem;">${event.timesince} ago</span>
+                                                </div>
+                                                <div class="timeline-meta d-flex flex-wrap align-items-center gap-2">
+                                                    <span>IP Address: <span class="badge bg-light text-dark border font-monospace" style="font-size: 0.725rem;">${escapeHtml(event.ip_address)}</span></span>
+                                                    <span class="text-truncate" style="max-width: 400px;" title="${escapeHtml(event.user_agent)}">User Agent: <code class="text-dark font-monospace" style="font-size: 0.75rem;">${escapeHtml(event.user_agent)}</code></span>
+                                                    ${botBadge}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                    timelineEl.insertAdjacentHTML('beforeend', itemHtml);
+                                } else {
+                                    // Update existing item's timesince text
+                                    const itemEl = timelineEl.querySelector(`[data-event-id="${event.id}"]`);
+                                    if (itemEl) {
+                                        const timesinceEl = itemEl.querySelector('.text-muted.font-monospace');
+                                        if (timesinceEl) {
+                                            timesinceEl.textContent = `${event.timesince} ago`;
+                                        }
+                                    }
+                                }
+                            });
+                        } else {
+                            container.innerHTML = `
+                                <div class="text-center py-5 text-muted">
+                                    <i class="bi bi-eye-slash fs-2 d-block mb-2 text-white-50"></i>
+                                    <p class="mb-0 small">No opens recorded for this message yet.</p>
+                                </div>
+                            `;
+                        }
+                    }
+                })
+                .catch(error => console.error('Error polling email stats:', error))
+                .finally(() => {
+                    isFetching = false;
+                    // Reset spinner back to pulse
+                    if (dot) {
+                        dot.className = 'spinner-grow spinner-grow-sm';
+                        dot.style.width = '0.5rem';
+                        dot.style.height = '0.5rem';
+                    }
+                });
+        }
+
+        // Start polling loop
+        setInterval(pollEmailStats, POLL_INTERVAL);
+    });
+</script>
 {% endblock %}

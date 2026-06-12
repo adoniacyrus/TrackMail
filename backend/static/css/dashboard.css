@@ -427,3 +427,31 @@
         font-size: 1.65rem;
     }
 }
+
+/* Real-time Tracking Animations */
+@keyframes pulse-updated-glow {
+    0% { transform: scale(1); }
+    50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.15); transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+.pulse-updated {
+    animation: pulse-updated-glow 0.8s ease-out;
+}
+
+@keyframes pulse-badge-glow {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+.pulse-badge {
+    animation: pulse-badge-glow 0.5s ease-out;
+}
+
+@keyframes highlight-new-fade {
+    0% { background-color: rgba(16, 185, 129, 0.15); }
+    100% { background-color: transparent; }
+}
+.highlight-new-item {
+    animation: highlight-new-fade 2.5s ease-out;
+}
+
