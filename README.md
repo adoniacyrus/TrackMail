@@ -15,9 +15,6 @@
 
 <br>
 
-### 🚀 Live Demo
-
-https://trackmail.adoniacyrus.com/
 
 ### 💻 GitHub Repository
 
@@ -428,12 +425,6 @@ TrackMail is deployed using:
 * Nginx Reverse Proxy
 * Redis Queue
 * Celery Workers
-
-### 🌐 Live URL
-
-https://trackmail.adoniacyrus.com/
-
----
 
 ## Current Email Infrastructure
 
